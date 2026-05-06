@@ -18,8 +18,9 @@ import static com.project.smart_wallet.mapper.AssetTypeMapper.toResponse;
 import static com.project.smart_wallet.mapper.CreateAssetMapper.toEntity;
 import static com.project.smart_wallet.mapper.CreateAssetMapper.toResponse;
 
-@RequiredArgsConstructor
+
 @Service
+@RequiredArgsConstructor
 public class AssetService {
 
     private final AssetTypeRepository assetTypeRepository;
