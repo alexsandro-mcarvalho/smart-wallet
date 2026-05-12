@@ -1,14 +1,16 @@
 package com.project.smart_wallet.controller;
 
-import com.project.smart_wallet.dto.request.CreateAssetTypeRequest;
 import com.project.smart_wallet.dto.request.CreateAssetRequest;
-import com.project.smart_wallet.dto.response.CreateAssetTypeResponse;
 import com.project.smart_wallet.dto.response.CreateAssetResponse;
 import com.project.smart_wallet.service.AssetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/assets")

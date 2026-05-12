@@ -2,7 +2,6 @@ package com.project.smart_wallet.repository;
 
 import com.project.smart_wallet.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 

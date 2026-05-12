@@ -2,8 +2,6 @@ package com.project.smart_wallet.dto.response;
 
 import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.domain.InterestRatePeriod;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.Instant;

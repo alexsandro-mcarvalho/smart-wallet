@@ -1,13 +1,13 @@
 package com.project.smart_wallet.service;
 
-import com.project.smart_wallet.exceptions.custom.ConflictException;
-import com.project.smart_wallet.security.service.TokenService;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.request.LoginRequest;
 import com.project.smart_wallet.dto.request.RegisterRequest;
 import com.project.smart_wallet.dto.response.RegisterResponse;
 import com.project.smart_wallet.dto.response.TokenResponse;
+import com.project.smart_wallet.exceptions.custom.ConflictException;
 import com.project.smart_wallet.repository.UserRepository;
+import com.project.smart_wallet.security.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

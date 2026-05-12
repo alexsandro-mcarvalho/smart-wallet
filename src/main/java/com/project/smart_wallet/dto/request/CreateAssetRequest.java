@@ -5,7 +5,6 @@ import com.project.smart_wallet.domain.InterestRatePeriod;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
 

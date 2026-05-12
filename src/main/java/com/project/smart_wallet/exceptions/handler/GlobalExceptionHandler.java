@@ -1,8 +1,8 @@
 package com.project.smart_wallet.exceptions.handler;
 
-import com.project.smart_wallet.exceptions.dto.ErrorResponse;
 import com.project.smart_wallet.exceptions.custom.ConflictException;
 import com.project.smart_wallet.exceptions.custom.NotFoundException;
+import com.project.smart_wallet.exceptions.dto.ErrorResponse;
 import com.project.smart_wallet.exceptions.dto.FieldErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
