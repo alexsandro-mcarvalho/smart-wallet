@@ -33,6 +33,10 @@ public class AuthService {
                 request.password());
         Authentication auth = authenticationManager.authenticate(usernamePassword);
 
+        if (auth.getPrincipal() == null) {
+            throw new RuntimeException();
+        }
+
         return tokenService.generateToken((UserDetails) auth.getPrincipal());
     }
 
