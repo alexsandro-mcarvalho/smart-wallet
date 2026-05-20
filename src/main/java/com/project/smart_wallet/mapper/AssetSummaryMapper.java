@@ -10,7 +10,8 @@ public class AssetSummaryMapper {
                 entity.getId(),
                 entity.getName(),
                 entity.getSymbol(),
-                entity.getAssetType()
+                entity.getAssetType(),
+                entity.getLogoUrl()
         );
     }
 }
