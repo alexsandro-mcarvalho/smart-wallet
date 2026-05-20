@@ -3,7 +3,7 @@ package com.project.smart_wallet.service;
 import com.project.smart_wallet.domain.Asset;
 import com.project.smart_wallet.dto.request.CreateAssetRequest;
 import com.project.smart_wallet.dto.response.CreateAssetResponse;
-import com.project.smart_wallet.exceptions.custom.ConflictException;
+import com.project.smart_wallet.exception.ConflictException;
 import com.project.smart_wallet.repository.AssetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

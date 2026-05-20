@@ -1,4 +1,4 @@
-package com.project.smart_wallet.exceptions.dto;
+package com.project.smart_wallet.dto.response;
 
 import java.time.Instant;
 import java.util.List;

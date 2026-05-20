@@ -1,4 +1,4 @@
-package com.project.smart_wallet.exceptions.custom;
+package com.project.smart_wallet.exception;
 
 public class BusinessException extends RuntimeException {
     public BusinessException(String message) {

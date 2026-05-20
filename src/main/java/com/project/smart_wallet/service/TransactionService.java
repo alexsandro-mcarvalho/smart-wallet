@@ -1,15 +1,13 @@
 package com.project.smart_wallet.service;
 
 import com.project.smart_wallet.domain.Asset;
-import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.domain.Transaction;
 import com.project.smart_wallet.domain.TransactionType;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.request.CreateTransactionRequest;
 import com.project.smart_wallet.dto.response.CreateTransactionResponse;
-import com.project.smart_wallet.exceptions.custom.BusinessException;
-import com.project.smart_wallet.exceptions.custom.ConflictException;
-import com.project.smart_wallet.exceptions.custom.NotFoundException;
+import com.project.smart_wallet.exception.BusinessException;
+import com.project.smart_wallet.exception.NotFoundException;
 import com.project.smart_wallet.repository.AssetRepository;
 import com.project.smart_wallet.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
