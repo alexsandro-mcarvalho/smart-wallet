@@ -1,16 +1,21 @@
 package com.project.smart_wallet.service;
 
 import com.project.smart_wallet.domain.Asset;
+import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.domain.Transaction;
+import com.project.smart_wallet.domain.TransactionType;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.request.CreateTransactionRequest;
 import com.project.smart_wallet.dto.response.CreateTransactionResponse;
+import com.project.smart_wallet.exceptions.custom.BusinessException;
 import com.project.smart_wallet.exceptions.custom.ConflictException;
 import com.project.smart_wallet.exceptions.custom.NotFoundException;
 import com.project.smart_wallet.repository.AssetRepository;
 import com.project.smart_wallet.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toEntity;
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toResponse;
@@ -29,6 +34,17 @@ public class TransactionService {
         User user = userService.getAuthenticatedUser();
         Asset asset = assetRepository.findById(request.assetId())
                 .orElseThrow(() -> new NotFoundException("Asset não encontrado"));
+
+        if (request.type() == TransactionType.SELL) {
+            BigDecimal assetQuantity = transactionRepository.getTotalQuantityByUserIdAndAssetId(
+                    user.getId(),
+                    asset.getId()
+            );
+
+            if (assetQuantity.compareTo(request.quantity()) < 0) {
+                throw new BusinessException("Usuário não possui saldo suficente");
+            }
+        }
 
         Transaction transaction = toEntity(request, user, asset);
 
