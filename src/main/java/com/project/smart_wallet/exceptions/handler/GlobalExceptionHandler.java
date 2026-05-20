@@ -1,5 +1,6 @@
 package com.project.smart_wallet.exceptions.handler;
 
+import com.project.smart_wallet.exceptions.custom.BusinessException;
 import com.project.smart_wallet.exceptions.custom.ConflictException;
 import com.project.smart_wallet.exceptions.custom.NotFoundException;
 import com.project.smart_wallet.exceptions.dto.ErrorResponse;
@@ -81,6 +82,18 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 Instant.now(),
                 HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                List.of(),
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
+    public ErrorResponse handleBusiness(BusinessException ex, HttpServletRequest request) {
+        return new ErrorResponse(
+                Instant.now(),
+                HttpStatus.UNPROCESSABLE_CONTENT.value(),
                 ex.getMessage(),
                 List.of(),
                 request.getRequestURI()
