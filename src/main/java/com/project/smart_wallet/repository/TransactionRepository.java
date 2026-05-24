@@ -11,11 +11,16 @@ import java.math.BigDecimal;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     @Query("""
-            SELECT SUM(t.quantity)
+            SELECT COALESCE(SUM(
+                CASE
+                    WHEN t.type = 'BUY' THEN t.quantity
+                    WHEN t.type = 'SELL' THEN - t.quantity
+                    ELSE 0
+                END
+            ), 0)
             FROM Transaction t
-            WHERE t.type = 'SELL'
-            AND t.user.id = :userId
+            WHERE t.user.id = :userId
             AND t.asset.id = :assetId
     """)
-    BigDecimal getTotalQuantityByUserIdAndAssetId(@Param("userId") long UserId, @Param("assetId") long assetId);
+    BigDecimal getTotalQuantityByUserIdAndAssetId(@Param("userId") long userId, @Param("assetId") long assetId);
 }
