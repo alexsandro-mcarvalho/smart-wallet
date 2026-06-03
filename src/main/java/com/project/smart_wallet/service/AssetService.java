@@ -23,11 +23,14 @@ public class AssetService {
     private final AssetRepository assetRepository;
 
     public CreateAssetResponse create(CreateAssetRequest request) {
-        if (assetRepository.findBySymbol(request.symbol()).isPresent()) {
+
+        String symbol = request.symbol().toUpperCase();
+
+        if (assetRepository.findBySymbol(symbol).isPresent()) {
             throw new ConflictException("Asset já cadastrado");
         }
 
-        Asset asset = toEntity(request, request.symbol().toUpperCase());
+        Asset asset = toEntity(request, symbol);
 
         assetRepository.save(asset);
 
