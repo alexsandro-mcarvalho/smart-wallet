@@ -1,0 +1,21 @@
+package com.project.smart_wallet.controller;
+
+import com.project.smart_wallet.dto.response.BalanceResponse;
+import com.project.smart_wallet.service.WalletService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/wallet")
+@RequiredArgsConstructor
+public class WalletController {
+
+    private final WalletService walletService;
+
+    @GetMapping
+    public BalanceResponse getBalance() {
+        return walletService.getBalance();
+    }
+}
