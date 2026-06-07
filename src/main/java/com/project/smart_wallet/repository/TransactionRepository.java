@@ -1,7 +1,7 @@
 package com.project.smart_wallet.repository;
 
 import com.project.smart_wallet.domain.Transaction;
-import com.project.smart_wallet.dto.projection.BalanceProjection;
+import com.project.smart_wallet.dto.projection.AssetBalanceProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,6 +28,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("""
             SELECT
                 t.asset.name AS assetName,
+                t.asset.assetType AS assetType,
                 COALESCE(SUM(
                     CASE
                         WHEN t.type = 'BUY' THEN t.quantity
@@ -45,7 +46,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                 ) AS averagePrice
             FROM Transaction t
             WHERE t.user.id = :userId
-            GROUP BY t.asset.name
+            GROUP BY t.asset.name, t.asset.assetType
     """)
-    List<BalanceProjection> getBalance(@Param("userId") long userId);
+    List<AssetBalanceProjection> getBalance(@Param("userId") long userId);
 }
