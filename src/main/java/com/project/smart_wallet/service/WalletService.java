@@ -40,8 +40,6 @@ public class WalletService {
         Map<String, AssetPriceResponse> cryptoAssetsPrice = coingeckoClient.getPricePerAsset(cryptoAssets);
 
         BigDecimal totalBalance = BigDecimal.ZERO;
-        BigDecimal totalSpending = BigDecimal.ZERO;
-        BigDecimal profit = BigDecimal.ZERO;
 
         for (AssetBalanceProjection assetBalance : assetsBalance) {
             AssetPriceResponse currentAsset = null;
@@ -56,9 +54,17 @@ public class WalletService {
             }
 
             totalBalance = totalBalance.add(currentAssetPrice.multiply(assetBalance.quantity()));
-
         }
 
-        return new BalanceResponse(totalBalance.setScale(2, RoundingMode.HALF_EVEN), totalSpending, profit);
+        BigDecimal totalSpending = transactionRepository.getTotalSpending(user.getId())
+                .setScale(2, RoundingMode.HALF_EVEN);
+        totalBalance = totalBalance.setScale(2, RoundingMode.HALF_EVEN);
+
+
+        return new BalanceResponse(
+                totalBalance,
+                totalSpending,
+                totalBalance.subtract(totalSpending)
+        );
     }
 }

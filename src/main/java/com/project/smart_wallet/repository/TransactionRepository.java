@@ -49,4 +49,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             GROUP BY t.asset.name, t.asset.assetType
     """)
     List<AssetBalanceProjection> getBalance(@Param("userId") long userId);
+
+    @Query("""
+            SELECT
+                COALESCE(SUM(
+                    CASE
+                        WHEN t.type = 'BUY' THEN t.quantity * t.price
+                        WHEN t.type = 'SELL' THEN - (t.quantity * t.price)
+                        ELSE 0
+                    END
+                ), 0)
+            FROM Transaction t
+            WHERE t.user.id = :userId
+    """)
+    BigDecimal getTotalSpending(@Param("userId") long userId);
 }

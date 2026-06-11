@@ -9,5 +9,6 @@ public record AssetBalanceProjection(
         String assetName,
         AssetType assetType,
         BigDecimal quantity,
-        BigDecimal averagePrice) {
+        BigDecimal averagePrice
+) {
 }
