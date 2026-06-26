@@ -10,7 +10,7 @@ public class WebClientConfig {
 
     private static final String COINGECKO_API_URL = "https://api.coingecko.com/api/v3";
 
-    private static final String BRAPI_API_URL = "https://brapi.dev/api/v2/";
+    private static final String BRAPI_API_URL = "https://brapi.dev/api/v2";
 
     private final String BRAPI_API_KEY;
 
