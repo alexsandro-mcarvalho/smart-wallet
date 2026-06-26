@@ -28,6 +28,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("""
             SELECT
                 t.asset.name AS assetName,
+                t.asset.symbol as assetSymbol,
                 t.asset.assetType AS assetType,
                 COALESCE(SUM(
                     CASE
@@ -46,7 +47,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                 ) AS averagePrice
             FROM Transaction t
             WHERE t.user.id = :userId
-            GROUP BY t.asset.name, t.asset.assetType
+            GROUP BY t.asset.name, t.asset.symbol, t.asset.assetType
     """)
     List<AssetBalanceProjection> getBalance(@Param("userId") long userId);
 
