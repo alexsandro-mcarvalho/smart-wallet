@@ -22,7 +22,7 @@ public class AssetService {
 
     private final AssetRepository assetRepository;
 
-    public CreateAssetResponse create(CreateAssetRequest request) {
+    public CreateAssetResponse createAsset(CreateAssetRequest request) {
 
         String symbol = request.symbol().toUpperCase();
 
@@ -37,7 +37,7 @@ public class AssetService {
         return toResponse(asset);
     }
 
-    public List<AssetSummaryResponse> listAll() {
+    public List<AssetSummaryResponse> listTransactions() {
         return assetRepository.findAll().stream()
                 .map(AssetSummaryMapper::toResponse)
                 .toList();

@@ -26,13 +26,13 @@ public class AssetController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreateAssetResponse createAsset(@Valid @RequestBody CreateAssetRequest request) {
-        return assetService.create(request);
+        return assetService.createAsset(request);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.CREATED)
     public List<AssetSummaryResponse> listAssets() {
-        return assetService.listAll();
+        return assetService.listTransactions();
     }
 
 }

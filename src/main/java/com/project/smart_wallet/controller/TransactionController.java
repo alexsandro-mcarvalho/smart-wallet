@@ -22,7 +22,7 @@ public class TransactionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateTransactionResponse create(@Valid @RequestBody CreateTransactionRequest request) {
+    public CreateTransactionResponse createTransaction(@Valid @RequestBody CreateTransactionRequest request) {
         return transactionService.createTransaction(request);
     }
 }

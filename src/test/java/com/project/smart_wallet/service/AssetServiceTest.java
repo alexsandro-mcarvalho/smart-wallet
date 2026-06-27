@@ -37,7 +37,7 @@ class AssetServiceTest {
 
     @Test
     @DisplayName("Should create an asset when the assetRequest is valid")
-    void shouldCreateAnAsset() {
+    void shouldCreateAssetAnAsset() {
 
         CreateAssetRequest request = new CreateAssetRequest(
                 "bitcoin",
@@ -50,7 +50,7 @@ class AssetServiceTest {
 
         when(assetRepository.findBySymbol(anyString())).thenReturn(Optional.empty());
 
-        CreateAssetResponse response = assetService.create(request);
+        CreateAssetResponse response = assetService.createAsset(request);
 
         verify(assetRepository, times(1)).findBySymbol(request.symbol().toUpperCase());
         verify(assetRepository, times(1)).save(any(Asset.class));
@@ -82,6 +82,6 @@ class AssetServiceTest {
 
         when(assetRepository.findBySymbol(anyString())).thenReturn(Optional.of(asset));
 
-        Assertions.assertThrows(ConflictException.class, () -> assetService.create(request));
+        Assertions.assertThrows(ConflictException.class, () -> assetService.createAsset(request));
     }
 }
