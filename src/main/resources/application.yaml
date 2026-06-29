@@ -1,6 +1,10 @@
 spring:
   application:
     name: smart-wallet
+  data:
+    web:
+      pageable:
+        max-page-size: 100
 
   datasource:
     url: jdbc:postgresql://localhost:5432/${DB_NAME}
