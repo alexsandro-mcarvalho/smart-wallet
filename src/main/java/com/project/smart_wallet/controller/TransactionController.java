@@ -1,12 +1,17 @@
 package com.project.smart_wallet.controller;
 
-import com.project.smart_wallet.domain.Transaction;
 import com.project.smart_wallet.dto.request.CreateTransactionRequest;
 import com.project.smart_wallet.dto.response.CreateTransactionResponse;
+import com.project.smart_wallet.dto.response.PaginatedResponse;
+import com.project.smart_wallet.dto.response.TransactionListResponse;
 import com.project.smart_wallet.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +29,13 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     public CreateTransactionResponse createTransaction(@Valid @RequestBody CreateTransactionRequest request) {
         return transactionService.createTransaction(request);
+    }
+
+    @GetMapping
+    public PaginatedResponse<TransactionListResponse> listTransactions(
+            @PageableDefault(page = 0, size = 3, sort = {"transactionAt"}, direction = Sort.Direction.DESC)
+            Pageable pageable
+    ) {
+        return transactionService.listTransactions(pageable);
     }
 }

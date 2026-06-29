@@ -6,17 +6,23 @@ import com.project.smart_wallet.domain.TransactionType;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.request.CreateTransactionRequest;
 import com.project.smart_wallet.dto.response.CreateTransactionResponse;
+import com.project.smart_wallet.dto.response.PaginatedResponse;
+import com.project.smart_wallet.dto.response.TransactionListResponse;
 import com.project.smart_wallet.exception.BusinessException;
 import com.project.smart_wallet.exception.NotFoundException;
+import com.project.smart_wallet.mapper.TransactionMapper;
 import com.project.smart_wallet.repository.AssetRepository;
 import com.project.smart_wallet.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toEntity;
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toResponse;
+import static com.project.smart_wallet.mapper.PageMapper.toResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +55,13 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         return toResponse(transaction);
+    }
+
+    public PaginatedResponse<TransactionListResponse> listTransactions(Pageable pageable) {
+        User user = userService.getAuthenticatedUser();
+        Page<TransactionListResponse> paginatedTransactions = transactionRepository.findAllByUser(user, pageable)
+                .map(TransactionMapper::toResponse);
+
+        return toResponse(paginatedTransactions);
     }
 }
