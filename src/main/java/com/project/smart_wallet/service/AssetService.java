@@ -4,16 +4,21 @@ import com.project.smart_wallet.domain.Asset;
 import com.project.smart_wallet.dto.request.CreateAssetRequest;
 import com.project.smart_wallet.dto.response.AssetSummaryResponse;
 import com.project.smart_wallet.dto.response.CreateAssetResponse;
+import com.project.smart_wallet.dto.response.PaginatedResponse;
 import com.project.smart_wallet.exception.ConflictException;
 import com.project.smart_wallet.mapper.AssetSummaryMapper;
+import com.project.smart_wallet.mapper.PageMapper;
 import com.project.smart_wallet.repository.AssetRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static com.project.smart_wallet.mapper.CreateAssetMapper.toEntity;
 import static com.project.smart_wallet.mapper.CreateAssetMapper.toResponse;
+import static com.project.smart_wallet.mapper.PageMapper.toResponse;
 
 
 @Service
@@ -37,10 +42,11 @@ public class AssetService {
         return toResponse(asset);
     }
 
-    public List<AssetSummaryResponse> listTransactions() {
-        return assetRepository.findAll().stream()
-                .map(AssetSummaryMapper::toResponse)
-                .toList();
+    public PaginatedResponse<AssetSummaryResponse> listTransactions(Pageable pageable) {
+        Page<AssetSummaryResponse> paginatedAssets = assetRepository.findAll(pageable)
+                .map(AssetSummaryMapper::toResponse);
+
+        return toResponse(paginatedAssets);
     }
 
 }
