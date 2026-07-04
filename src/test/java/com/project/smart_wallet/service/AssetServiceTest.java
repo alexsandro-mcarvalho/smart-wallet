@@ -48,11 +48,13 @@ class AssetServiceTest {
                 InterestRatePeriod.ANNUAL
         );
 
-        when(assetRepository.findBySymbol(anyString())).thenReturn(Optional.empty());
+        when(assetRepository.existsByNameAndSymbolAllIgnoringCase(anyString(), anyString())).thenReturn(false);
 
         CreateAssetResponse response = assetService.createAsset(request);
 
-        verify(assetRepository, times(1)).findBySymbol(request.symbol().toUpperCase());
+        verify(assetRepository, times(1)).existsByNameAndSymbolAllIgnoringCase(
+                anyString(), anyString()
+        );
         verify(assetRepository, times(1)).save(any(Asset.class));
 
         assertEquals(request.symbol().toUpperCase(), response.symbol());
@@ -80,7 +82,7 @@ class AssetServiceTest {
                 InterestRatePeriod.ANNUAL
         );
 
-        when(assetRepository.findBySymbol(anyString())).thenReturn(Optional.of(asset));
+        when(assetRepository.existsByNameAndSymbolAllIgnoringCase(anyString(), anyString())).thenReturn(true);
 
         Assertions.assertThrows(ConflictException.class, () -> assetService.createAsset(request));
     }

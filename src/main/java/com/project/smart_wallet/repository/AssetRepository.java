@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface AssetRepository extends JpaRepository<Asset, Long> {
 
-    Optional<Asset> findBySymbol(String symbol);
+    boolean existsByNameAndSymbolAllIgnoringCase(String name, String symbol);
 }

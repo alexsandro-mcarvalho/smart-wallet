@@ -29,12 +29,11 @@ public class AssetService {
 
     public CreateAssetResponse createAsset(CreateAssetRequest request) {
 
-        String symbol = request.symbol().toUpperCase();
-
-        if (assetRepository.findBySymbol(symbol).isPresent()) {
+        if (assetRepository.existsByNameAndSymbolAllIgnoringCase(request.name(), request.symbol())) {
             throw new ConflictException("Asset já cadastrado");
         }
 
+        String symbol = request.symbol().toUpperCase();
         Asset asset = toEntity(request, symbol);
 
         assetRepository.save(asset);
