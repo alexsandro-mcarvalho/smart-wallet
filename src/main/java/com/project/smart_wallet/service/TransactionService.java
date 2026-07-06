@@ -4,6 +4,7 @@ import com.project.smart_wallet.domain.Asset;
 import com.project.smart_wallet.domain.Transaction;
 import com.project.smart_wallet.domain.TransactionType;
 import com.project.smart_wallet.domain.User;
+import com.project.smart_wallet.domain.WalletHolding;
 import com.project.smart_wallet.dto.request.CreateTransactionRequest;
 import com.project.smart_wallet.dto.response.CreateTransactionResponse;
 import com.project.smart_wallet.dto.response.PaginatedResponse;
@@ -13,12 +14,15 @@ import com.project.smart_wallet.exception.NotFoundException;
 import com.project.smart_wallet.mapper.TransactionMapper;
 import com.project.smart_wallet.repository.AssetRepository;
 import com.project.smart_wallet.repository.TransactionRepository;
+import com.project.smart_wallet.repository.WalletHoldingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toEntity;
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toResponse;
@@ -32,8 +36,11 @@ public class TransactionService {
 
     private final AssetRepository assetRepository;
 
+    private final WalletHoldingRepository walletHoldingRepository;
+
     private final UserService userService;
 
+    @Transactional
     public CreateTransactionResponse createTransaction(CreateTransactionRequest request) {
         User user = userService.getAuthenticatedUser();
         Asset asset = assetRepository.findById(request.assetId())
@@ -51,10 +58,24 @@ public class TransactionService {
         }
 
         Transaction transaction = toEntity(request, user, asset);
+        WalletHolding walletHolding = applyTransactionToWalletHolding(transaction);
 
         transactionRepository.save(transaction);
+        walletHoldingRepository.save(walletHolding);
 
         return toResponse(transaction);
+    }
+
+    private WalletHolding applyTransactionToWalletHolding(Transaction transaction) {
+        Optional<WalletHolding> walletHolding = walletHoldingRepository.findByUserAndAsset(
+                transaction.getUser(), transaction.getAsset()
+        );
+
+        if (walletHolding.isPresent()) {
+            return walletHolding.get().applyTransaction(transaction);
+        }
+
+        return new WalletHolding(transaction.getUser(), transaction.getAsset(), transaction.getQuantity());
     }
 
     public PaginatedResponse<TransactionListResponse> listTransactions(Pageable pageable) {
