@@ -42,6 +42,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WalletHolding> walletHoldings;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
