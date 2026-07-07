@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static com.project.smart_wallet.domain.TransactionType.SELL;
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toEntity;
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toResponse;
 import static com.project.smart_wallet.mapper.PageMapper.toResponse;
@@ -46,17 +47,6 @@ public class TransactionService {
         Asset asset = assetRepository.findById(request.assetId())
                 .orElseThrow(() -> new NotFoundException("Asset não encontrado"));
 
-        if (request.type() == TransactionType.SELL) {
-            BigDecimal assetQuantity = transactionRepository.getTotalQuantityByUserIdAndAssetId(
-                    user.getId(),
-                    asset.getId()
-            );
-
-            if (assetQuantity.compareTo(request.quantity()) < 0) {
-                throw new BusinessException("Usuário não possui saldo suficente");
-            }
-        }
-
         Transaction transaction = toEntity(request, user, asset);
         WalletHolding walletHolding = applyTransactionToWalletHolding(transaction);
 
@@ -71,11 +61,19 @@ public class TransactionService {
                 transaction.getUser(), transaction.getAsset()
         );
 
-        if (walletHolding.isPresent()) {
-            return walletHolding.get().applyTransaction(transaction);
+        if (transaction.getType() == SELL) {
+
+            if (walletHolding.isEmpty() || walletHolding.get().getQuantity().compareTo(transaction.getQuantity()) < 0) {
+                throw new BusinessException("Saldo de ativos insuficientes");
+            }
         }
 
-        return new WalletHolding(transaction.getUser(), transaction.getAsset(), transaction.getQuantity());
+        return walletHolding.map(holding -> holding.applyTransaction(transaction))
+                .orElseGet(() -> new WalletHolding(
+                        transaction.getUser(),
+                        transaction.getAsset(),
+                        transaction.getQuantity()
+                ));
     }
 
     public PaginatedResponse<TransactionListResponse> listTransactions(Pageable pageable) {
