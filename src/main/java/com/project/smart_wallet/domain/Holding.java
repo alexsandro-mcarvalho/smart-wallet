@@ -12,17 +12,16 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.AnyDiscriminatorImplicitValues;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(name = "wallet_holdings")
+@Table(name = "holdings")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WalletHolding {
+public class Holding {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +43,7 @@ public class WalletHolding {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public WalletHolding(Transaction transaction) {
+    public Holding(Transaction transaction) {
         if (transaction.getType() == TransactionType.SELL) {
             throw new BusinessException("Saldo de ativo insuficiente");
         }
@@ -54,7 +53,7 @@ public class WalletHolding {
         this.quantity = transaction.getQuantity();
     }
 
-    public WalletHolding applyTransaction(Transaction transaction) {
+    public Holding applyTransaction(Transaction transaction) {
         if (transaction.getType() == TransactionType.SELL && transaction.getQuantity().compareTo(quantity) > 0) {
             throw new BusinessException("Saldo de ativo insuficiente");
         }

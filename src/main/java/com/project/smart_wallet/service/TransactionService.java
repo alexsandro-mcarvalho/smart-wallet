@@ -2,29 +2,25 @@ package com.project.smart_wallet.service;
 
 import com.project.smart_wallet.domain.Asset;
 import com.project.smart_wallet.domain.Transaction;
-import com.project.smart_wallet.domain.TransactionType;
 import com.project.smart_wallet.domain.User;
-import com.project.smart_wallet.domain.WalletHolding;
+import com.project.smart_wallet.domain.Holding;
 import com.project.smart_wallet.dto.request.CreateTransactionRequest;
 import com.project.smart_wallet.dto.response.CreateTransactionResponse;
 import com.project.smart_wallet.dto.response.PaginatedResponse;
 import com.project.smart_wallet.dto.response.TransactionListResponse;
-import com.project.smart_wallet.exception.BusinessException;
 import com.project.smart_wallet.exception.NotFoundException;
 import com.project.smart_wallet.mapper.TransactionMapper;
 import com.project.smart_wallet.repository.AssetRepository;
 import com.project.smart_wallet.repository.TransactionRepository;
-import com.project.smart_wallet.repository.WalletHoldingRepository;
+import com.project.smart_wallet.repository.HoldingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
-import static com.project.smart_wallet.domain.TransactionType.SELL;
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toEntity;
 import static com.project.smart_wallet.mapper.CreateTransactionMapper.toResponse;
 import static com.project.smart_wallet.mapper.PageMapper.toResponse;
@@ -37,7 +33,7 @@ public class TransactionService {
 
     private final AssetRepository assetRepository;
 
-    private final WalletHoldingRepository walletHoldingRepository;
+    private final HoldingRepository holdingRepository;
 
     private final UserService userService;
 
@@ -48,22 +44,21 @@ public class TransactionService {
                 .orElseThrow(() -> new NotFoundException("Asset não encontrado"));
 
         Transaction transaction = toEntity(request, user, asset);
-        WalletHolding walletHolding = applyTransactionToWalletHolding(transaction);
+        Holding holding = applyTransactionToHolding(transaction);
 
         transactionRepository.save(transaction);
-        walletHoldingRepository.save(walletHolding);
+        holdingRepository.save(holding);
 
         return toResponse(transaction);
     }
 
-    private WalletHolding applyTransactionToWalletHolding(Transaction transaction) {
-        Optional<WalletHolding> walletHolding = walletHoldingRepository.findByUserAndAsset(
+    private Holding applyTransactionToHolding(Transaction transaction) {
+        Optional<Holding> walletHolding = holdingRepository.findByUserAndAsset(
                 transaction.getUser(), transaction.getAsset()
         );
 
-
         return walletHolding.map(holding -> holding.applyTransaction(transaction))
-                .orElseGet(() -> new WalletHolding(transaction));
+                .orElseGet(() -> new Holding(transaction));
     }
 
     public PaginatedResponse<TransactionListResponse> listTransactions(Pageable pageable) {

@@ -43,7 +43,7 @@ public class User {
     private List<Transaction> transactions;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WalletHolding> walletHoldings;
+    private List<Holding> holdings;
 
     public User(String username, String email, String password) {
         this.username = username;

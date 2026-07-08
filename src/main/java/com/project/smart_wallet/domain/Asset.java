@@ -59,7 +59,7 @@ public class Asset {
     private List<AssetPriceHistory> priceHistories;
 
     @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WalletHolding> walletHoldings;
+    private List<Holding> holdings;
 
 
     public Asset(
