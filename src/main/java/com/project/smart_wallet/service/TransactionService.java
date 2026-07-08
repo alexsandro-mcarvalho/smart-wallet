@@ -61,19 +61,9 @@ public class TransactionService {
                 transaction.getUser(), transaction.getAsset()
         );
 
-        if (transaction.getType() == SELL) {
-
-            if (walletHolding.isEmpty() || walletHolding.get().getQuantity().compareTo(transaction.getQuantity()) < 0) {
-                throw new BusinessException("Saldo de ativos insuficientes");
-            }
-        }
 
         return walletHolding.map(holding -> holding.applyTransaction(transaction))
-                .orElseGet(() -> new WalletHolding(
-                        transaction.getUser(),
-                        transaction.getAsset(),
-                        transaction.getQuantity()
-                ));
+                .orElseGet(() -> new WalletHolding(transaction));
     }
 
     public PaginatedResponse<TransactionListResponse> listTransactions(Pageable pageable) {

@@ -1,5 +1,6 @@
 package com.project.smart_wallet.domain;
 
+import com.project.smart_wallet.exception.BusinessException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -43,16 +44,25 @@ public class WalletHolding {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public WalletHolding(User user, Asset asset, BigDecimal quantity) {
-        this.user = user;
-        this.asset = asset;
-        this.quantity = quantity;
+    public WalletHolding(Transaction transaction) {
+        if (transaction.getType() == TransactionType.SELL) {
+            throw new BusinessException("Saldo de ativo insuficiente");
+        }
+
+        this.user = transaction.getUser();
+        this.asset = transaction.getAsset();
+        this.quantity = transaction.getQuantity();
     }
 
     public WalletHolding applyTransaction(Transaction transaction) {
+        if (transaction.getType() == TransactionType.SELL && transaction.getQuantity().compareTo(quantity) > 0) {
+            throw new BusinessException("Saldo de ativo insuficiente");
+        }
+
         updatedAt = Instant.now();
         quantity = transaction.getType() == TransactionType.SELL ? quantity.subtract(transaction.getQuantity())
                 : quantity.add(transaction.getQuantity());
+
         return this;
     }
 }
