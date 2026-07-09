@@ -13,8 +13,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 
 @Entity
@@ -30,8 +32,9 @@ public class Holding {
     @Setter
     private BigDecimal quantity;
 
-    @Setter
-    @CreationTimestamp
+    private BigDecimal averagePrice;
+
+    @UpdateTimestamp
     private Instant updatedAt;
 
     @CreationTimestamp
@@ -51,6 +54,7 @@ public class Holding {
         this.user = transaction.getUser();
         this.asset = transaction.getAsset();
         this.quantity = transaction.getQuantity();
+        this.averagePrice = transaction.getPrice();
     }
 
     public Holding applyTransaction(Transaction transaction) {
@@ -59,9 +63,24 @@ public class Holding {
         }
 
         updatedAt = Instant.now();
+        updateAveragePrice(transaction);
         quantity = transaction.getType() == TransactionType.SELL ? quantity.subtract(transaction.getQuantity())
                 : quantity.add(transaction.getQuantity());
 
         return this;
+    }
+
+    private void updateAveragePrice(Transaction transaction) {
+        if (transaction.getType() == TransactionType.BUY) {
+            BigDecimal currentAmount = quantity.multiply(averagePrice);
+            BigDecimal transactionAmount = transaction.getQuantity().multiply(transaction.getPrice());
+            BigDecimal quantityUpdated = quantity.add(transaction.getQuantity());
+
+            averagePrice = currentAmount.add(transactionAmount).divide(quantityUpdated, 8, RoundingMode.HALF_EVEN);
+        }
+
+        if (transaction.getType() == TransactionType.SELL && transaction.getQuantity().compareTo(quantity) == 0) {
+            averagePrice = BigDecimal.ZERO;
+        }
     }
 }

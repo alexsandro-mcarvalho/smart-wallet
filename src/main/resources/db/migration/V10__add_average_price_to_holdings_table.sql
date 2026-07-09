@@ -1,0 +1,2 @@
+ALTER TABLE wallet_holdings
+ADD COLUMN price NUMERIC(18,2) NOT NULL

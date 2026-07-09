@@ -20,9 +20,11 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
                 w.asset.name AS assetName,
                 w.asset.symbol AS assetSymbol,
                 w.asset.assetType AS assetType,
-                quantity
+                w.quantity,
+                w.averagePrice
             FROM WalletHolding w
             WHERE user.id = :userId
+            AND w.quantity > 0;
             """)
     List<AssetBalanceProjection> getHoldingsByUserId(@Param("userId") long userId);
 }
