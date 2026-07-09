@@ -4,7 +4,7 @@ import com.project.smart_wallet.client.BrapiClient;
 import com.project.smart_wallet.client.CoingeckoClient;
 import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.domain.User;
-import com.project.smart_wallet.dto.projection.AssetBalanceProjection;
+import com.project.smart_wallet.dto.AssetPosition;
 import com.project.smart_wallet.dto.response.BalanceResponse;
 import com.project.smart_wallet.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,18 +36,18 @@ public class WalletService {
     public BalanceResponse getBalance() {
         User user = userService.getAuthenticatedUser();
 
-        List<AssetBalanceProjection> assetsBalance = transactionRepository.getBalance(user.getId());
+        List<AssetPosition> assetsBalance = transactionRepository.getBalance(user.getId());
 
         List<String> cryptoAssetsName = filterByAssetType(
                 assetsBalance,
                 CRYPTO_CURRENCY,
-                AssetBalanceProjection::assetName
+                AssetPosition::assetName
         );
 
         List<String> stocksAssetsSymbol = filterByAssetType(
                 assetsBalance,
                 STOCK,
-                AssetBalanceProjection::assetSymbol
+                AssetPosition::assetSymbol
         );
 
         CompletableFuture<Map<String, BigDecimal>> cryptoAssetsPriceFuture = !cryptoAssetsName.isEmpty()
@@ -65,7 +65,7 @@ public class WalletService {
 
         BigDecimal totalBalance = BigDecimal.ZERO;
 
-        for (AssetBalanceProjection assetBalance : assetsBalance) {
+        for (AssetPosition assetBalance : assetsBalance) {
             BigDecimal currentAssetPrice = null;
 
              switch (assetBalance.assetType()) {
@@ -93,9 +93,9 @@ public class WalletService {
     }
 
     private List<String> filterByAssetType(
-            List<AssetBalanceProjection> assets,
+            List<AssetPosition> assets,
             AssetType type,
-            Function<AssetBalanceProjection,String> mapMethod
+            Function<AssetPosition,String> mapMethod
     ) {
         return assets.stream()
                 .filter(asset -> asset.assetType() == type)

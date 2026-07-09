@@ -3,7 +3,7 @@ package com.project.smart_wallet.repository;
 import com.project.smart_wallet.domain.Asset;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.domain.Holding;
-import com.project.smart_wallet.dto.projection.AssetBalanceProjection;
+import com.project.smart_wallet.dto.AssetPosition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,5 +26,5 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
             WHERE user.id = :userId
             AND w.quantity > 0;
             """)
-    List<AssetBalanceProjection> getHoldingsByUserId(@Param("userId") long userId);
+    List<AssetPosition> getHoldingsByUserId(@Param("userId") long userId);
 }

@@ -1,10 +1,10 @@
-package com.project.smart_wallet.dto.projection;
+package com.project.smart_wallet.dto;
 
 import com.project.smart_wallet.domain.AssetType;
 
 import java.math.BigDecimal;
 
-public record AssetBalanceProjection(
+public record AssetPosition(
 
         String assetName,
         String assetSymbol,

@@ -2,7 +2,7 @@ package com.project.smart_wallet.repository;
 
 import com.project.smart_wallet.domain.Transaction;
 import com.project.smart_wallet.domain.User;
-import com.project.smart_wallet.dto.projection.AssetBalanceProjection;
+import com.project.smart_wallet.dto.AssetPosition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -53,7 +53,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             WHERE t.user.id = :userId
             GROUP BY t.asset.name, t.asset.symbol, t.asset.assetType
     """)
-    List<AssetBalanceProjection> getBalance(@Param("userId") long userId);
+    List<AssetPosition> getBalance(@Param("userId") long userId);
 
     @Query("""
             SELECT
