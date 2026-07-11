@@ -62,7 +62,6 @@ public class Holding {
             throw new BusinessException("Saldo de ativo insuficiente");
         }
 
-        updatedAt = Instant.now();
         updateAveragePrice(transaction);
         quantity = transaction.getType() == TransactionType.SELL ? quantity.subtract(transaction.getQuantity())
                 : quantity.add(transaction.getQuantity());
@@ -73,10 +72,9 @@ public class Holding {
     private void updateAveragePrice(Transaction transaction) {
         if (transaction.getType() == TransactionType.BUY) {
             BigDecimal currentAmount = quantity.multiply(averagePrice);
-            BigDecimal transactionAmount = transaction.getQuantity().multiply(transaction.getPrice());
             BigDecimal quantityUpdated = quantity.add(transaction.getQuantity());
 
-            averagePrice = currentAmount.add(transactionAmount).divide(quantityUpdated, 8, RoundingMode.HALF_EVEN);
+            averagePrice = currentAmount.add(transaction.getPrice()).divide(quantityUpdated, 8, RoundingMode.HALF_EVEN);
         }
 
         if (transaction.getType() == TransactionType.SELL && transaction.getQuantity().compareTo(quantity) == 0) {

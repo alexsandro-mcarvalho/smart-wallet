@@ -18,6 +18,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 
 @Entity
@@ -70,5 +71,9 @@ public class Transaction {
         this.type = type;
         this.user = user;
         this.asset = asset;
+    }
+
+    public BigDecimal getUnitPrice() {
+        return price.divide(quantity, 8, RoundingMode.HALF_EVEN);
     }
 }
