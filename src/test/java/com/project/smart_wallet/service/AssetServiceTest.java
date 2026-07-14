@@ -19,8 +19,10 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,10 +54,10 @@ class AssetServiceTest {
 
         CreateAssetResponse response = assetService.createAsset(request);
 
-        verify(assetRepository, times(1)).existsByNameAndSymbolAllIgnoringCase(
+        verify(assetRepository).existsByNameAndSymbolAllIgnoringCase(
                 anyString(), anyString()
         );
-        verify(assetRepository, times(1)).save(any(Asset.class));
+        verify(assetRepository).save(any(Asset.class));
 
         assertEquals(request.symbol().toUpperCase(), response.symbol());
     }
@@ -84,6 +86,8 @@ class AssetServiceTest {
 
         when(assetRepository.existsByNameAndSymbolAllIgnoringCase(anyString(), anyString())).thenReturn(true);
 
-        Assertions.assertThrows(ConflictException.class, () -> assetService.createAsset(request));
+        assertThrows(ConflictException.class, () -> assetService.createAsset(request));
+
+        verify(assetRepository, never()).save(any(Asset.class));
     }
 }
