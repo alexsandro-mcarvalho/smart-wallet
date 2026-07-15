@@ -6,11 +6,13 @@ import com.project.smart_wallet.domain.Transaction;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.request.CreateTransactionRequest;
 import com.project.smart_wallet.dto.response.CreateTransactionResponse;
+import com.project.smart_wallet.exception.BusinessException;
 import com.project.smart_wallet.exception.NotFoundException;
 import com.project.smart_wallet.repository.AssetRepository;
 import com.project.smart_wallet.repository.HoldingRepository;
 import com.project.smart_wallet.repository.TransactionRepository;
 import com.project.smart_wallet.testDataBuilder.domain.AssetBuilder;
+import com.project.smart_wallet.testDataBuilder.domain.HoldingBuilder;
 import com.project.smart_wallet.testDataBuilder.domain.UserBuilder;
 import com.project.smart_wallet.testDataBuilder.dto.CreateTransactionRequestBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -22,12 +24,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 
 import static com.project.smart_wallet.testDataBuilder.domain.AssetBuilder.anAsset;
 import static com.project.smart_wallet.testDataBuilder.domain.UserBuilder.aUser;
 import static com.project.smart_wallet.testDataBuilder.dto.CreateTransactionRequestBuilder.aBuyCreateTransactionRequest;
+import static com.project.smart_wallet.testDataBuilder.dto.CreateTransactionRequestBuilder.aSellCreateTransactionRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,7 +60,7 @@ class TransactionServiceTest {
 
     @DisplayName("Should throw a NotFoundException when the asset does not exists")
     @Test
-    void ShouldThrowExceptionWhenAssetDoesNotExists() {
+    void ShouldThrowNotFoundExceptionWhenAssetDoesNotExists() {
         CreateTransactionRequest request = aBuyCreateTransactionRequest().build();
 
         when(assetRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -89,6 +93,63 @@ class TransactionServiceTest {
         assertEquals(request.price(), response.price());
         assertEquals(request.transactionAt(), response.transactionAt());
         assertEquals(asset.getId(), response.asset().id());
+    }
+
+    @DisplayName("Should create a sell transaction when it's have enough holdings")
+    @Test
+    void shouldCreateSellTransaction() {
+
+        CreateTransactionRequest request = aSellCreateTransactionRequest()
+                .withQuantity(new BigDecimal("5.00"))
+                .build();
+
+        User user = aUser().build();
+        Asset asset = anAsset().build();
+        Holding holding = HoldingBuilder.aHolding()
+                .withUser(user)
+                .withAsset(asset)
+                .withQuantity(new BigDecimal("10.00"))
+                .build();
+
+        when(userService.getAuthenticatedUser()).thenReturn(user);
+        when(assetRepository.findById(anyLong())).thenReturn(Optional.of(asset));
+        when(holdingRepository.findByUserAndAsset(any(User.class), any(Asset.class))).thenReturn(Optional.of(holding));
+
+        CreateTransactionResponse response = transactionService.createTransaction(request);
+
+        verify(transactionRepository).save(any(Transaction.class));
+        verify(holdingRepository).save(any(Holding.class));
+
+        assertEquals(request.type(), response.type());
+        assertEquals(request.quantity(), response.quantity());
+        assertEquals(request.price(), response.price());
+        assertEquals(request.transactionAt(), response.transactionAt());
+        assertEquals(asset.getId(), response.asset().id());
+    }
+
+    @DisplayName("Should throw BusinessException when create a sell transaction with not enough holdings")
+    @Test
+    void ShouldThrowBusinessExceptionWhenCreateSellTransaction() {
+        CreateTransactionRequest request = aSellCreateTransactionRequest()
+                .withQuantity(new BigDecimal("5.00"))
+                .build();
+
+        User user = aUser().build();
+        Asset asset = anAsset().build();
+        Holding holding = HoldingBuilder.aHolding()
+                .withUser(user)
+                .withAsset(asset)
+                .withQuantity(new BigDecimal("2.00"))
+                .build();
+
+        when(userService.getAuthenticatedUser()).thenReturn(user);
+        when(assetRepository.findById(anyLong())).thenReturn(Optional.of(asset));
+        when(holdingRepository.findByUserAndAsset(any(User.class), any(Asset.class))).thenReturn(Optional.of(holding));
+
+        Assertions.assertThrows(BusinessException.class, () -> transactionService.createTransaction(request));
+
+        verify(transactionRepository, never()).save(any(Transaction.class));
+        verify(holdingRepository, never()).save(any(Holding.class));
     }
 
 }
