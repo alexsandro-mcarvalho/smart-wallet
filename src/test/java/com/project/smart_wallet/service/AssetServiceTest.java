@@ -7,6 +7,8 @@ import com.project.smart_wallet.dto.request.CreateAssetRequest;
 import com.project.smart_wallet.dto.response.CreateAssetResponse;
 import com.project.smart_wallet.exception.ConflictException;
 import com.project.smart_wallet.repository.AssetRepository;
+import com.project.smart_wallet.testDataBuilder.domain.AssetBuilder;
+import com.project.smart_wallet.testDataBuilder.dto.CreateAssetRequestBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static com.project.smart_wallet.testDataBuilder.dto.CreateAssetRequestBuilder.aCreateAssetRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,14 +44,9 @@ class AssetServiceTest {
     @DisplayName("Should create an asset when the assetRequest is valid")
     void shouldCreateAssetAnAsset() {
 
-        CreateAssetRequest request = new CreateAssetRequest(
-                "bitcoin",
-                AssetType.CRYPTO_CURRENCY,
-                "btc",
-                "https://example.com/bitcoin.png",
-                new BigDecimal("5.25"),
-                InterestRatePeriod.ANNUAL
-        );
+        CreateAssetRequest request = aCreateAssetRequest()
+                .withSymbol("btc")
+                .build();
 
         when(assetRepository.existsByNameAndSymbolAllIgnoringCase(anyString(), anyString())).thenReturn(false);
 
@@ -66,23 +64,7 @@ class AssetServiceTest {
     @DisplayName("Should throw a ConflictException when the asset already exists")
     void shouldThrowConflictException() {
 
-        CreateAssetRequest request = new CreateAssetRequest(
-                "bitcoin",
-                AssetType.CRYPTO_CURRENCY,
-                "btc",
-                "https://example.com/bitcoin.png",
-                new BigDecimal("5.25"),
-                InterestRatePeriod.ANNUAL
-        );
-
-        Asset asset = new Asset(
-                "bitcoin",
-                AssetType.CRYPTO_CURRENCY,
-                "BTC",
-                "https://example.com/bitcoin.png",
-                new BigDecimal("5.25"),
-                InterestRatePeriod.ANNUAL
-        );
+        CreateAssetRequest request = aCreateAssetRequest().build();
 
         when(assetRepository.existsByNameAndSymbolAllIgnoringCase(anyString(), anyString())).thenReturn(true);
 
