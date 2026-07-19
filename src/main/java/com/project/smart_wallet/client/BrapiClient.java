@@ -1,5 +1,6 @@
 package com.project.smart_wallet.client;
 
+import com.project.smart_wallet.client.dto.PriceLookupAsset;
 import com.project.smart_wallet.client.dto.brapi.BrapiStockResponse;
 import com.project.smart_wallet.client.mapper.BrapiStockMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Component
 public class BrapiClient implements AssetPriceProvider {
@@ -21,8 +23,11 @@ public class BrapiClient implements AssetPriceProvider {
     }
 
     @Override
-    public CompletableFuture<Map<String, BigDecimal>> getPricePerAsset(List<String> assets) {
-        String symbols = String.join(",", assets);
+    public CompletableFuture<Map<String, BigDecimal>> getPricePerAsset(List<PriceLookupAsset> assets) {
+
+        String symbols = assets.stream()
+                .map(PriceLookupAsset::assetSymbol)
+                .collect(Collectors.joining(","));
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder

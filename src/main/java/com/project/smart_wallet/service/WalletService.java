@@ -5,8 +5,10 @@ import com.project.smart_wallet.client.CoingeckoClient;
 import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.AssetPosition;
+import com.project.smart_wallet.client.dto.PriceLookupAsset;
 import com.project.smart_wallet.dto.response.BalanceResponse;
 import com.project.smart_wallet.repository.TransactionRepository;
+import com.project.smart_wallet.repository.HoldingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 import static com.project.smart_wallet.domain.AssetType.CRYPTO_CURRENCY;
 import static com.project.smart_wallet.domain.AssetType.STOCK;
@@ -27,6 +28,8 @@ public class WalletService {
 
     private final TransactionRepository transactionRepository;
 
+    private final HoldingRepository holdingRepository;
+
     private final UserService userService;
 
     private final CoingeckoClient coingeckoClient;
@@ -36,27 +39,19 @@ public class WalletService {
     public BalanceResponse getBalance() {
         User user = userService.getAuthenticatedUser();
 
-        List<AssetPosition> assetsBalance = transactionRepository.getBalance(user.getId());
+        List<AssetPosition> assetsBalance = holdingRepository.getHoldingsByUserId(user.getId());
 
-        List<String> cryptoAssetsName = filterByAssetType(
-                assetsBalance,
-                CRYPTO_CURRENCY,
-                AssetPosition::assetName
-        );
+        List<PriceLookupAsset> cryptoAssetsName = filterByAssetType(assetsBalance, CRYPTO_CURRENCY);
 
-        List<String> stocksAssetsSymbol = filterByAssetType(
-                assetsBalance,
-                STOCK,
-                AssetPosition::assetSymbol
-        );
+        List<PriceLookupAsset> stocksAssetsSymbol = filterByAssetType(assetsBalance, STOCK);
 
-        CompletableFuture<Map<String, BigDecimal>> cryptoAssetsPriceFuture = !cryptoAssetsName.isEmpty()
-                ? coingeckoClient.getPricePerAsset(cryptoAssetsName)
-                : CompletableFuture.completedFuture(Collections.emptyMap());
+        CompletableFuture<Map<String, BigDecimal>> cryptoAssetsPriceFuture = cryptoAssetsName.isEmpty()
+                ? CompletableFuture.completedFuture(Collections.emptyMap())
+                : coingeckoClient.getPricePerAsset(cryptoAssetsName);
 
-        CompletableFuture<Map<String, BigDecimal>> stocksAssetsPriceFuture = !stocksAssetsSymbol.isEmpty()
-                ? brapiClient.getPricePerAsset(stocksAssetsSymbol)
-                : CompletableFuture.completedFuture(Collections.emptyMap());
+        CompletableFuture<Map<String, BigDecimal>> stocksAssetsPriceFuture = stocksAssetsSymbol.isEmpty()
+                ? CompletableFuture.completedFuture(Collections.emptyMap())
+                : brapiClient.getPricePerAsset(stocksAssetsSymbol);
 
         CompletableFuture.allOf(cryptoAssetsPriceFuture, stocksAssetsPriceFuture).join();
 
@@ -92,14 +87,10 @@ public class WalletService {
         );
     }
 
-    private List<String> filterByAssetType(
-            List<AssetPosition> assets,
-            AssetType type,
-            Function<AssetPosition,String> mapMethod
-    ) {
+    private List<PriceLookupAsset> filterByAssetType(List<AssetPosition> assets, AssetType type) {
         return assets.stream()
                 .filter(asset -> asset.assetType() == type)
-                .map(mapMethod)
+                .map(asset -> new PriceLookupAsset(asset.assetName(), asset.assetSymbol()))
                 .toList();
     }
 

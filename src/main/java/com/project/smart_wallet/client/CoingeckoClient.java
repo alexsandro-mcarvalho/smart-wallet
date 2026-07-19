@@ -1,5 +1,6 @@
 package com.project.smart_wallet.client;
 
+import com.project.smart_wallet.client.dto.PriceLookupAsset;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static com.project.smart_wallet.client.mapper.CoingeckoMapper.toAssetResponse;
 
@@ -24,8 +26,11 @@ public class CoingeckoClient implements AssetPriceProvider {
     }
 
     @Override
-    public CompletableFuture<Map<String, BigDecimal>> getPricePerAsset(List<String> assets) {
-        String ids = String.join(",", assets);
+    public CompletableFuture<Map<String, BigDecimal>> getPricePerAsset(List<PriceLookupAsset> assets) {
+
+        String ids = assets.stream()
+                .map(PriceLookupAsset::assetName)
+                .collect(Collectors.joining(","));
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
