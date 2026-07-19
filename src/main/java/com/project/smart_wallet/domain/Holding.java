@@ -54,7 +54,7 @@ public class Holding {
         this.user = transaction.getUser();
         this.asset = transaction.getAsset();
         this.quantity = transaction.getQuantity();
-        this.averagePrice = transaction.getPrice();
+        this.averagePrice = transaction.getPrice().divide(transaction.getQuantity(), 8, RoundingMode.HALF_EVEN);
     }
 
     public Holding applyTransaction(Transaction transaction) {
