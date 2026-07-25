@@ -5,6 +5,9 @@ spring:
     web:
       pageable:
         max-page-size: 100
+  jpa:
+    hibernate:
+      ddl-auto: validate
 
   datasource:
     url: jdbc:postgresql://localhost:5432/${DB_NAME}
