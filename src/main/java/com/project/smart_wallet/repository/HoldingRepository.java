@@ -17,14 +17,14 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
 
     @Query("""
             SELECT
-                w.asset.name AS assetName,
-                w.asset.symbol AS assetSymbol,
-                w.asset.assetType AS assetType,
-                w.quantity,
-                w.averagePrice
-            FROM WalletHolding w
+                h.asset.name AS assetName,
+                h.asset.symbol AS assetSymbol,
+                h.asset.assetType AS assetType,
+                h.quantity,
+                h.averagePrice
+            FROM Holding h
             WHERE user.id = :userId
-            AND w.quantity > 0;
+            AND h.quantity > 0
             """)
     List<AssetPosition> getHoldingsByUserId(@Param("userId") long userId);
 }
