@@ -1,6 +1,7 @@
 package com.project.smart_wallet.client;
 
 import com.project.smart_wallet.client.dto.PriceLookupAsset;
+import com.project.smart_wallet.domain.AssetType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -15,14 +16,24 @@ import java.util.stream.Collectors;
 import static com.project.smart_wallet.client.mapper.CoingeckoMapper.toAssetResponse;
 
 @Component
-public class CoingeckoClient implements AssetPriceProvider {
+public class CoingeckoCryptoClient implements AssetPriceProvider {
 
     private static final String CURRENCY = "brl";
 
     private final WebClient webClient;
 
-    public CoingeckoClient(@Qualifier("coingeckoWebClient") WebClient webClient) {
+    public CoingeckoCryptoClient(@Qualifier("coingeckoWebClient") WebClient webClient) {
         this.webClient = webClient;
+    }
+
+    @Override
+    public int getQuantityPerRequest() {
+        return 10;
+    }
+
+    @Override
+    public AssetType getAssetType() {
+        return AssetType.CRYPTO_CURRENCY;
     }
 
     @Override

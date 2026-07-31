@@ -1,7 +1,7 @@
 package com.project.smart_wallet.service;
 
-import com.project.smart_wallet.client.BrapiClient;
-import com.project.smart_wallet.client.CoingeckoClient;
+import com.project.smart_wallet.client.BrapiStockClient;
+import com.project.smart_wallet.client.CoingeckoCryptoClient;
 import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.AssetPosition;
@@ -32,9 +32,9 @@ public class WalletService {
 
     private final UserService userService;
 
-    private final CoingeckoClient coingeckoClient;
+    private final CoingeckoCryptoClient coingeckoCryptoClient;
 
-    private final BrapiClient brapiClient;
+    private final BrapiStockClient brapiStockClient;
 
     public BalanceResponse getBalance() {
         User user = userService.getAuthenticatedUser();
@@ -47,11 +47,11 @@ public class WalletService {
 
         CompletableFuture<Map<String, BigDecimal>> cryptoAssetsPriceFuture = cryptoAssetsName.isEmpty()
                 ? CompletableFuture.completedFuture(Collections.emptyMap())
-                : coingeckoClient.getPricePerAsset(cryptoAssetsName);
+                : coingeckoCryptoClient.getPricePerAsset(cryptoAssetsName);
 
         CompletableFuture<Map<String, BigDecimal>> stocksAssetsPriceFuture = stocksAssetsSymbol.isEmpty()
                 ? CompletableFuture.completedFuture(Collections.emptyMap())
-                : brapiClient.getPricePerAsset(stocksAssetsSymbol);
+                : brapiStockClient.getPricePerAsset(stocksAssetsSymbol);
 
         CompletableFuture.allOf(cryptoAssetsPriceFuture, stocksAssetsPriceFuture).join();
 

@@ -3,6 +3,7 @@ package com.project.smart_wallet.client;
 import com.project.smart_wallet.client.dto.PriceLookupAsset;
 import com.project.smart_wallet.client.dto.brapi.BrapiStockResponse;
 import com.project.smart_wallet.client.mapper.BrapiStockMapper;
+import com.project.smart_wallet.domain.AssetType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,12 +15,22 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
-public class BrapiClient implements AssetPriceProvider {
+public class BrapiStockClient implements AssetPriceProvider {
 
     private final WebClient webClient;
 
-    public BrapiClient(@Qualifier("brapiWebClient") WebClient webClient) {
+    public BrapiStockClient(@Qualifier("brapiWebClient") WebClient webClient) {
         this.webClient = webClient;
+    }
+
+    @Override
+    public int getQuantityPerRequest() {
+        return 1;
+    }
+
+    @Override
+    public AssetType getAssetType() {
+        return AssetType.STOCK;
     }
 
     @Override
