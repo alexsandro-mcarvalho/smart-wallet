@@ -5,7 +5,7 @@ import com.project.smart_wallet.client.CoingeckoCryptoClient;
 import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.AssetPosition;
-import com.project.smart_wallet.client.dto.PriceLookupAsset;
+import com.project.smart_wallet.client.dto.AssetPriceLookUp;
 import com.project.smart_wallet.dto.response.BalanceResponse;
 import com.project.smart_wallet.repository.TransactionRepository;
 import com.project.smart_wallet.repository.HoldingRepository;
@@ -37,60 +37,65 @@ public class WalletService {
     private final BrapiStockClient brapiStockClient;
 
     public BalanceResponse getBalance() {
-        User user = userService.getAuthenticatedUser();
-
-        List<AssetPosition> assetsBalance = holdingRepository.getHoldingsByUserId(user.getId());
-
-        List<PriceLookupAsset> cryptoAssetsName = filterByAssetType(assetsBalance, CRYPTO_CURRENCY);
-
-        List<PriceLookupAsset> stocksAssetsSymbol = filterByAssetType(assetsBalance, STOCK);
-
-        CompletableFuture<Map<String, BigDecimal>> cryptoAssetsPriceFuture = cryptoAssetsName.isEmpty()
-                ? CompletableFuture.completedFuture(Collections.emptyMap())
-                : coingeckoCryptoClient.getPricePerAsset(cryptoAssetsName);
-
-        CompletableFuture<Map<String, BigDecimal>> stocksAssetsPriceFuture = stocksAssetsSymbol.isEmpty()
-                ? CompletableFuture.completedFuture(Collections.emptyMap())
-                : brapiStockClient.getPricePerAsset(stocksAssetsSymbol);
-
-        CompletableFuture.allOf(cryptoAssetsPriceFuture, stocksAssetsPriceFuture).join();
-
-        Map<String, BigDecimal> cryptoAssetsPrice = cryptoAssetsPriceFuture.join();
-        Map<String, BigDecimal> stocksAssetsPrice = stocksAssetsPriceFuture.join();
-
-        BigDecimal totalBalance = BigDecimal.ZERO;
-
-        for (AssetPosition assetBalance : assetsBalance) {
-            BigDecimal currentAssetPrice = null;
-
-             switch (assetBalance.assetType()) {
-                case CRYPTO_CURRENCY -> currentAssetPrice = cryptoAssetsPrice.get(assetBalance.assetName());
-                case STOCK -> currentAssetPrice = stocksAssetsPrice.get(assetBalance.assetSymbol());
-            }
-
-            if (currentAssetPrice == null) {
-                currentAssetPrice = assetBalance.averagePrice();
-            }
-
-            totalBalance = totalBalance.add(currentAssetPrice.multiply(assetBalance.quantity()));
-        }
-
-        BigDecimal totalSpending = transactionRepository.getTotalSpending(user.getId())
-                .setScale(2, RoundingMode.HALF_EVEN);
-        totalBalance = totalBalance.setScale(2, RoundingMode.HALF_EVEN);
-
-
+//        User user = userService.getAuthenticatedUser();
+//
+//        List<AssetPosition> assetsBalance = holdingRepository.getHoldingsByUserId(user.getId());
+//
+//        List<AssetPriceLookUp> cryptoAssetsName = filterByAssetType(assetsBalance, CRYPTO_CURRENCY);
+//
+//        List<AssetPriceLookUp> stocksAssetsSymbol = filterByAssetType(assetsBalance, STOCK);
+//
+//        CompletableFuture<Map<String, BigDecimal>> cryptoAssetsPriceFuture = cryptoAssetsName.isEmpty()
+//                ? CompletableFuture.completedFuture(Collections.emptyMap())
+//                : coingeckoCryptoClient.getPricePerAsset(cryptoAssetsName);
+//
+//        CompletableFuture<Map<String, BigDecimal>> stocksAssetsPriceFuture = stocksAssetsSymbol.isEmpty()
+//                ? CompletableFuture.completedFuture(Collections.emptyMap())
+//                : brapiStockClient.getPricePerAsset(stocksAssetsSymbol);
+//
+//        CompletableFuture.allOf(cryptoAssetsPriceFuture, stocksAssetsPriceFuture).join();
+//
+//        Map<String, BigDecimal> cryptoAssetsPrice = cryptoAssetsPriceFuture.join();
+//        Map<String, BigDecimal> stocksAssetsPrice = stocksAssetsPriceFuture.join();
+//
+//        BigDecimal totalBalance = BigDecimal.ZERO;
+//
+//        for (AssetPosition assetBalance : assetsBalance) {
+//            BigDecimal currentAssetPrice = null;
+//
+//             switch (assetBalance.assetType()) {
+//                case CRYPTO_CURRENCY -> currentAssetPrice = cryptoAssetsPrice.get(assetBalance.assetName());
+//                case STOCK -> currentAssetPrice = stocksAssetsPrice.get(assetBalance.assetSymbol());
+//            }
+//
+//            if (currentAssetPrice == null) {
+//                currentAssetPrice = assetBalance.averagePrice();
+//            }
+//
+//            totalBalance = totalBalance.add(currentAssetPrice.multiply(assetBalance.quantity()));
+//        }
+//
+//        BigDecimal totalSpending = transactionRepository.getTotalSpending(user.getId())
+//                .setScale(2, RoundingMode.HALF_EVEN);
+//        totalBalance = totalBalance.setScale(2, RoundingMode.HALF_EVEN);
+//
+//
+//        return new BalanceResponse(
+//                totalBalance,
+//                totalSpending,
+//                totalBalance.subtract(totalSpending)
+//        );
         return new BalanceResponse(
-                totalBalance,
-                totalSpending,
-                totalBalance.subtract(totalSpending)
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO
         );
     }
 
-    private List<PriceLookupAsset> filterByAssetType(List<AssetPosition> assets, AssetType type) {
+    private List<AssetPriceLookUp> filterByAssetType(List<AssetPosition> assets, AssetType type) {
         return assets.stream()
                 .filter(asset -> asset.assetType() == type)
-                .map(asset -> new PriceLookupAsset(asset.assetName(), asset.assetSymbol()))
+                .map(asset -> new AssetPriceLookUp(asset.assetName(), asset.assetSymbol()))
                 .toList();
     }
 
