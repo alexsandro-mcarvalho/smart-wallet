@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/api/v1/transactions")
 @RequiredArgsConstructor
 public class TransactionController {
 
@@ -33,7 +33,7 @@ public class TransactionController {
 
     @GetMapping
     public PaginatedResponse<TransactionListResponse> listTransactions(
-            @PageableDefault(page = 0, size = 3, sort = {"transactionAt"}, direction = Sort.Direction.DESC)
+            @PageableDefault(size = 3, sort = {"transactionAt"}, direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
         return transactionService.listTransactions(pageable);
