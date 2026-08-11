@@ -19,4 +19,10 @@ public class AssetPriceScheduler {
     public void refreshCryptoPrices() {
         assetPriceService.refreshPrices(AssetType.CRYPTO_CURRENCY);
     }
+
+    @Scheduled(fixedRate = 60, timeUnit = TimeUnit.MINUTES)
+    public void refreshStockPrices() {
+        assetPriceService.refreshPrices(AssetType.STOCK);
+    }
+
 }
