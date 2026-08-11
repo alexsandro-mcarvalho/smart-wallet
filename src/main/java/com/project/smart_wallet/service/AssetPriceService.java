@@ -21,6 +21,11 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.StructuredTaskScope;
+
+import static java.util.concurrent.StructuredTaskScope.*;
+import static java.util.concurrent.StructuredTaskScope.Joiner.*;
+import static java.util.concurrent.StructuredTaskScope.Subtask.State.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -34,37 +39,48 @@ public class AssetPriceService {
 
     public void refreshPrices(AssetType assetType) {
         List<Asset> assets = assetRepository.findAllByAssetType(assetType);
-        Map<String, BigDecimal> assetsPrices = getAssetsPrice(assets, assetType);
-    }
-
-    @SneakyThrows
-    private Map<String, BigDecimal> getAssetsPrice(List<Asset> assets, AssetType assetType){
-        AssetPriceProvider provider = getProvider(assetType);
+        if (assets.isEmpty()) { return; }
 
         List<AssetPriceLookUp> assetPriceLookUps = assets.stream()
                 .map(AssetPriceLookupMapper::toResponse)
                 .toList();
+
+        Map<String, BigDecimal> assetsPrices = getAssetsPrice(assetPriceLookUps, assetType);
+    }
+
+
+    private Map<String, BigDecimal> getAssetsPrice(List<AssetPriceLookUp> assetPriceLookUps, AssetType assetType)  {
+        AssetPriceProvider provider = getProvider(assetType);
 
         List<List<AssetPriceLookUp>> assetsBatches = BatchUtils.partition(
                 assetPriceLookUps,
                 provider.getQuantityPerRequest()
         );
 
-        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+        try (var scope = StructuredTaskScope.open(Joiner.awaitAll())) {
 
-            List<Future<Map<String, BigDecimal>>> futures = new ArrayList<>();
+            List<Subtask<Map<String, BigDecimal>>> subtasks = new ArrayList<>();
 
             for (var batches : assetsBatches) {
-                futures.add(executor.submit(() -> provider.getPricePerAsset(batches)));
+                var subtask = scope.fork(() -> provider.getPricePerAsset(batches));
+                subtasks.add(subtask);
             }
 
-            Map<String, BigDecimal> prices = new HashMap<>();
+            try {
+                scope.join();
 
-            for (var future : futures) {
-                prices.putAll(future.get());
+                Map<String, BigDecimal> prices = new HashMap<>();
+
+                for (var subtask : subtasks) {
+                    if (subtask.state() == SUCCESS) {
+                        prices.putAll(subtask.get());
+                    }
+                }
+
+                return prices;
+            } catch (InterruptedException e) {
+                throw new RuntimeException();
             }
-
-            return prices;
         }
 
     }
