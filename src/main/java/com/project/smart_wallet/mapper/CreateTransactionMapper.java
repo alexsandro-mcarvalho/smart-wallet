@@ -5,8 +5,11 @@ import com.project.smart_wallet.domain.Transaction;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.request.CreateTransactionRequest;
 import com.project.smart_wallet.dto.response.CreateTransactionResponse;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class CreateTransactionMapper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class CreateTransactionMapper {
 
     public static Transaction toEntity(CreateTransactionRequest request, User user, Asset asset) {
         return new Transaction(

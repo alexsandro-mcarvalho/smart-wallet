@@ -1,12 +1,15 @@
 package com.project.smart_wallet.client.mapper;
 
 import com.project.smart_wallet.client.dto.brapi.BrapiStockResponse;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class BrapiStockMapper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class BrapiStockMapper {
 
     public static Map<String, BigDecimal> toAssetResponse(BrapiStockResponse response) {
         return response.results()

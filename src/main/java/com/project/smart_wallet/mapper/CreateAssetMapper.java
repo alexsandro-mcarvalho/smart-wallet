@@ -3,8 +3,11 @@ package com.project.smart_wallet.mapper;
 import com.project.smart_wallet.domain.Asset;
 import com.project.smart_wallet.dto.request.CreateAssetRequest;
 import com.project.smart_wallet.dto.response.CreateAssetResponse;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class CreateAssetMapper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class CreateAssetMapper {
 
     public static Asset toEntity(CreateAssetRequest request, String symbol) {
         return new Asset(

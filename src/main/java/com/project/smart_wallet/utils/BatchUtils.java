@@ -1,9 +1,13 @@
 package com.project.smart_wallet.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class BatchUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class BatchUtils {
 
     public static <T> List<List<T>> partition(List<T> items, int batchSize) {
         if (batchSize <= 0) {
