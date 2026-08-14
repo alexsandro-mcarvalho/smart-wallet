@@ -7,6 +7,7 @@ import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.dto.redis.AssetPriceCache;
 import com.project.smart_wallet.client.mapper.AssetPriceLookupMapper;
 import com.project.smart_wallet.repository.AssetRepository;
+import com.project.smart_wallet.utils.AssetPriceRedisKey;
 import com.project.smart_wallet.utils.BatchUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -14,6 +15,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +25,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.StructuredTaskScope;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static java.util.concurrent.StructuredTaskScope.*;
 import static java.util.concurrent.StructuredTaskScope.Joiner.*;
@@ -37,6 +42,8 @@ public class AssetPriceService {
 
     private final RedisTemplate<String, AssetPriceCache> redisTemplate;
 
+    private final Clock clock;
+
     public void refreshPrices(AssetType assetType) {
         List<Asset> assets = assetRepository.findAllByAssetType(assetType);
         if (assets.isEmpty()) { return; }
@@ -46,6 +53,15 @@ public class AssetPriceService {
                 .toList();
 
         Map<String, BigDecimal> assetsPrices = getAssetsPrice(assetPriceLookUps, assetType);
+        Instant updatedAt = Instant.now(clock);
+
+        Map<String, AssetPriceCache> redisValues =  assetsPrices.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> AssetPriceRedisKey.getKey(entry.getKey(), assetType),
+                        entry -> new AssetPriceCache(entry.getValue(), updatedAt)
+                ));
+
+        redisTemplate.opsForValue().multiSet(redisValues);
     }
 
 
