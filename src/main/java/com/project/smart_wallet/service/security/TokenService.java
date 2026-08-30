@@ -1,4 +1,4 @@
-package com.project.smart_wallet.security.service;
+package com.project.smart_wallet.service.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

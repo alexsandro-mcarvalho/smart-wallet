@@ -1,9 +1,9 @@
-package com.project.smart_wallet.security.filter;
+package com.project.smart_wallet.filter;
 
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.repository.UserRepository;
-import com.project.smart_wallet.security.model.CustomUser;
-import com.project.smart_wallet.security.service.TokenService;
+import com.project.smart_wallet.domain.CustomUser;
+import com.project.smart_wallet.service.security.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

@@ -1,6 +1,5 @@
-package com.project.smart_wallet.security.model;
+package com.project.smart_wallet.domain;
 
-import com.project.smart_wallet.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

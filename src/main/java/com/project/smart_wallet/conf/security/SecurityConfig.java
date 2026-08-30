@@ -1,6 +1,6 @@
 package com.project.smart_wallet.conf.security;
 
-import com.project.smart_wallet.security.filter.SecurityFilter;
+import com.project.smart_wallet.filter.SecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

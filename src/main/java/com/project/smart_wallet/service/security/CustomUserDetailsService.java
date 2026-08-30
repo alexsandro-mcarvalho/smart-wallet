@@ -1,8 +1,8 @@
-package com.project.smart_wallet.security.service;
+package com.project.smart_wallet.service.security;
 
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.repository.UserRepository;
-import com.project.smart_wallet.security.model.CustomUser;
+import com.project.smart_wallet.domain.CustomUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
