@@ -12,6 +12,8 @@ public class CustomUser implements UserDetails {
 
     private final User user;
 
+    public String getId() { return user.getId().toString(); }
+
     @Override
     public String getUsername() {
         return user.getEmail();

@@ -5,7 +5,7 @@ import com.project.smart_wallet.dto.response.CreateTransactionResponse;
 import com.project.smart_wallet.dto.response.PaginatedResponse;
 import com.project.smart_wallet.dto.response.TransactionListResponse;
 import com.project.smart_wallet.service.TransactionService;
-import com.project.smart_wallet.utils.Idempotency;
+import com.project.smart_wallet.annotation.Idempotency;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,10 +29,7 @@ public class TransactionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Idempotency
-    public CreateTransactionResponse createTransaction(
-            @RequestHeader("Idempotency-Key") String idempotencyKey,
-            @Valid @RequestBody CreateTransactionRequest request
-    ) {
+    public CreateTransactionResponse createTransaction(@Valid @RequestBody CreateTransactionRequest request) {
         return transactionService.createTransaction(request);
     }
 

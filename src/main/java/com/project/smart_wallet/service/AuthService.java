@@ -1,5 +1,6 @@
 package com.project.smart_wallet.service;
 
+import com.project.smart_wallet.domain.CustomUser;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.request.LoginRequest;
 import com.project.smart_wallet.dto.request.RegisterRequest;
@@ -37,7 +38,7 @@ public class AuthService {
             throw new RuntimeException();
         }
 
-        return tokenService.generateToken((UserDetails) auth.getPrincipal());
+        return tokenService.generateToken((CustomUser) auth.getPrincipal());
     }
 
     public RegisterResponse register(RegisterRequest request) {

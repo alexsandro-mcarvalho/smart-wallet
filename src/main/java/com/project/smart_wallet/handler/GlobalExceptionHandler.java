@@ -5,6 +5,7 @@ import com.project.smart_wallet.exception.ConflictException;
 import com.project.smart_wallet.exception.NotFoundException;
 import com.project.smart_wallet.dto.response.ErrorResponse;
 import com.project.smart_wallet.dto.response.FieldErrorResponse;
+import com.project.smart_wallet.exception.PreconditionFailedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -94,6 +95,18 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 Instant.now(),
                 HttpStatus.UNPROCESSABLE_CONTENT.value(),
+                ex.getMessage(),
+                List.of(),
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(PreconditionFailedException.class)
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    public ErrorResponse handlePreconditionFailed(PreconditionFailedException ex, HttpServletRequest request) {
+        return new ErrorResponse(
+                Instant.now(),
+                HttpStatus.PRECONDITION_FAILED.value(),
                 ex.getMessage(),
                 List.of(),
                 request.getRequestURI()

@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-import static com.project.smart_wallet.utils.AssetPriceRedisKey.buildKey;
+import static com.project.smart_wallet.utils.redis.AssetPriceRedisKey.buildKey;
 
 @Service
 @RequiredArgsConstructor

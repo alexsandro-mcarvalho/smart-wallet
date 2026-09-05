@@ -22,7 +22,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, IdempotencyCache> idempontencyTemplate(RedisConnectionFactory factory) {
+    public RedisTemplate<String, IdempotencyCache> idempotencyTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, IdempotencyCache> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
         template.setKeySerializer(new StringRedisSerializer());

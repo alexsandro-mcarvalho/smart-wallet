@@ -33,8 +33,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         String token = getToken(request);
 
         if (token != null) {
-            String email = tokenService.validateToken(token);
-            User user = userRepository.findByEmail(email)
+            String id = tokenService.validateToken(token);
+            User user = userRepository.findById(Long.valueOf(id))
                     .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
             UserDetails userDetails = new CustomUser(user);
 

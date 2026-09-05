@@ -1,5 +1,6 @@
 package com.project.smart_wallet.service;
 
+import com.project.smart_wallet.domain.CustomUser;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.exception.NotFoundException;
 import com.project.smart_wallet.repository.UserRepository;
@@ -25,5 +26,23 @@ public class UserService {
 
         return userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
+    }
+
+    public String getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (authentication == null) {
+            throw new RuntimeException();
+        }
+
+        CustomUser user = (CustomUser) authentication.getPrincipal();
+
+        if (user == null) {
+            throw new RuntimeException();
+        }
+
+        return user.getId();
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 public record ErrorResponse(
         Instant timestamp,
-        int Status,
+        int status,
         String message,
         List<FieldErrorResponse> errors,
         String path) {

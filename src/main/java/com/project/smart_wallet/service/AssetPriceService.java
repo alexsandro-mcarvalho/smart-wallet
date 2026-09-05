@@ -7,7 +7,6 @@ import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.dto.redis.AssetPriceCache;
 import com.project.smart_wallet.client.mapper.AssetPriceLookupMapper;
 import com.project.smart_wallet.repository.AssetRepository;
-import com.project.smart_wallet.utils.AssetPriceRedisKey;
 import com.project.smart_wallet.utils.BatchUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.stream.Collectors;
 
-import static com.project.smart_wallet.utils.AssetPriceRedisKey.buildKey;
+import static com.project.smart_wallet.utils.redis.AssetPriceRedisKey.buildKey;
 import static java.util.concurrent.StructuredTaskScope.*;
 import static java.util.concurrent.StructuredTaskScope.Subtask.State.SUCCESS;
 
