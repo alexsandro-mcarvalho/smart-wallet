@@ -1,6 +1,7 @@
 package com.project.smart_wallet.conf.redis;
 
 import com.project.smart_wallet.dto.redis.AssetPriceCache;
+import com.project.smart_wallet.dto.redis.IdempotencyCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -17,6 +18,15 @@ public class RedisConfig {
         template.setConnectionFactory(factory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new JacksonJsonRedisSerializer<>(AssetPriceCache.class));
+        return template;
+    }
+
+    @Bean
+    public RedisTemplate<String, IdempotencyCache> idempontencyTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, IdempotencyCache> template = new RedisTemplate<>();
+        template.setConnectionFactory(factory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new JacksonJsonRedisSerializer<>(IdempotencyCache.class));
         return template;
     }
 }

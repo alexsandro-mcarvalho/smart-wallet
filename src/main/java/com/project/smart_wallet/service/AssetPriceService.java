@@ -10,7 +10,6 @@ import com.project.smart_wallet.repository.AssetRepository;
 import com.project.smart_wallet.utils.AssetPriceRedisKey;
 import com.project.smart_wallet.utils.BatchUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +20,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.StructuredTaskScope;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static com.project.smart_wallet.utils.AssetPriceRedisKey.buildKey;
 import static java.util.concurrent.StructuredTaskScope.*;
-import static java.util.concurrent.StructuredTaskScope.Joiner.*;
 import static java.util.concurrent.StructuredTaskScope.Subtask.State.SUCCESS;
 
 @Service
@@ -57,7 +52,7 @@ public class AssetPriceService {
 
         Map<String, AssetPriceCache> redisValues =  assetsPrices.entrySet().stream()
                 .collect(Collectors.toMap(
-                        entry -> AssetPriceRedisKey.getKey(entry.getKey(), assetType),
+                        entry -> buildKey(entry.getKey(), assetType),
                         entry -> new AssetPriceCache(entry.getValue(), updatedAt)
                 ));
 

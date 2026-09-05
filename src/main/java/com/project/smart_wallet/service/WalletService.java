@@ -1,26 +1,22 @@
 package com.project.smart_wallet.service;
 
-import com.project.smart_wallet.client.BrapiStockClient;
-import com.project.smart_wallet.client.CoingeckoCryptoClient;
 import com.project.smart_wallet.domain.AssetType;
 import com.project.smart_wallet.domain.User;
 import com.project.smart_wallet.dto.AssetPosition;
 import com.project.smart_wallet.client.dto.AssetPriceLookUp;
+import com.project.smart_wallet.dto.redis.AssetPriceCache;
 import com.project.smart_wallet.dto.response.BalanceResponse;
 import com.project.smart_wallet.repository.TransactionRepository;
 import com.project.smart_wallet.repository.HoldingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
-import static com.project.smart_wallet.domain.AssetType.CRYPTO_CURRENCY;
-import static com.project.smart_wallet.domain.AssetType.STOCK;
+import static com.project.smart_wallet.utils.AssetPriceRedisKey.buildKey;
 
 @Service
 @RequiredArgsConstructor
@@ -32,14 +28,47 @@ public class WalletService {
 
     private final UserService userService;
 
-    private final CoingeckoCryptoClient coingeckoCryptoClient;
+    private final RedisTemplate<String, AssetPriceCache> redisTemplate;
 
-    private final BrapiStockClient brapiStockClient;
+    private static final int MONEY_SCALE = 2;
+
+    private static final RoundingMode MONEY_ROUNDING = RoundingMode.HALF_EVEN;
 
     public BalanceResponse getBalance() {
-//        User user = userService.getAuthenticatedUser();
-//
-//        List<AssetPosition> assetsBalance = holdingRepository.getHoldingsByUserId(user.getId());
+        User user = userService.getAuthenticatedUser();
+
+        List<AssetPosition> assetsBalance = holdingRepository.getHoldingsByUserId(user.getId());
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal totalSpending = BigDecimal.ZERO;
+
+        for (AssetPosition assetPosition : assetsBalance) {
+            String identifier = switch (assetPosition.assetType()) {
+                case CRYPTO_CURRENCY -> assetPosition.assetName();
+                case STOCK -> assetPosition.assetSymbol();
+            };
+            String redisKey = buildKey(identifier, assetPosition.assetType());
+
+            AssetPriceCache assetPriceCache = redisTemplate.opsForValue().get(redisKey);
+
+            BigDecimal currentSpending = assetPosition.quantity().multiply(assetPosition.averagePrice());
+            totalSpending = totalSpending.add(currentSpending);
+
+            if (assetPriceCache != null) {
+                BigDecimal currentAmount = assetPosition.quantity().multiply(assetPriceCache.price());
+                totalAmount = totalAmount.add(currentAmount);
+            } else {
+                // provisioriamente adiciona com fallback o valor investido no ativo
+                totalAmount = totalAmount.add(currentSpending);
+            }
+        }
+
+        return new BalanceResponse(
+                totalAmount.setScale(MONEY_SCALE, MONEY_ROUNDING),
+                totalSpending.setScale(MONEY_SCALE, MONEY_ROUNDING),
+                totalAmount.subtract(totalSpending).setScale(MONEY_SCALE, MONEY_ROUNDING)
+        );
+    }
 //
 //        List<AssetPriceLookUp> cryptoAssetsName = filterByAssetType(assetsBalance, CRYPTO_CURRENCY);
 //
@@ -85,12 +114,7 @@ public class WalletService {
 //                totalSpending,
 //                totalBalance.subtract(totalSpending)
 //        );
-        return new BalanceResponse(
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO
-        );
-    }
+
 
     private List<AssetPriceLookUp> filterByAssetType(List<AssetPosition> assets, AssetType type) {
         return assets.stream()
