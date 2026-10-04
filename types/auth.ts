@@ -6,6 +6,8 @@ export const registerSchema = z.object({
   password: z.string().min(6, "Senha deve ter 6 ou mais caracteres"),
 });
 
+export type RegisterRequest = z.infer<typeof registerSchema>;
+
 export type RegisterResponse = {
   id: number;
   username: string;
@@ -13,4 +15,10 @@ export type RegisterResponse = {
   createdAt: string;
 }
 
-export type RegisterRequest = z.infer<typeof registerSchema>;
+export const loginSchema = z.object({
+  email: z.email("Email inválido"),
+  password: z.string().min(6, "Senha deve ter 6 ou mais caracteres"),
+});
+
+export type LoginRequest = z.infer<typeof loginSchema>;
+
