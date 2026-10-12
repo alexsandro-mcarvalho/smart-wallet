@@ -44,18 +44,23 @@ export default function LoginPage() {
   return (
     <div className="max-w-xl">
       <AuthTitle title="Welcome back" description="Welcome back! Please enter your details" />
+
       <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
         <FormField label="Email" htmlFor="email">
           <Input placeholder="example@gmail.com" id="email" {...register("email")} />
           <FieldErrorMessage message={errors.email?.message} />
         </FormField>
+
         <FormField label="Senha" htmlFor="senha">
           <Input placeholder="Digite sua senha" id="senha" type="password" {...register("password")} />
           <FieldErrorMessage message={errors.password?.message} />
         </FormField>
+
         <Button disabled={!isValid || isSubmitting}>Entrar</Button>
+        
         <FieldErrorMessage message={errorMessage} />
       </form>
+
       <AuthRedirect description="Don't have an account?" redirectText="Sign up for free" redirectUrl="/register" />
     </div>
   );
