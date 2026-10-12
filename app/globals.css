@@ -5,6 +5,11 @@
   --color-text-1: #1b212d;
   --color-text-2: #929eae;
   --color-text-3: #78778b;
+  --color-gray-1: #FAFAFA;
+  --color-gray-2: #F8F8F8;
+  --color-gray-3: #F5F5F5;
+  --color-gray-4: #FDFDFD;
+  --color-gray-5: #F2F2F2;
 
   /* Fonts */
   --: var(--);
