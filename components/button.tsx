@@ -1,7 +1,5 @@
-type ButtonVariant = "primary" | "secondary";
-
 type ButtonProps = React.ComponentProps<"button"> & {
-  variant?: ButtonVariant;
+  variant?: "primary" | "secondary";
 };
 
 const buttonVariants = {

@@ -5,12 +5,14 @@
   --color-text-1: #1b212d;
   --color-text-2: #929eae;
   --color-text-3: #78778b;
-  --color-gray-1: #FAFAFA;
-  --color-gray-2: #F8F8F8;
-  --color-gray-3: #F5F5F5;
-  --color-gray-4: #FDFDFD;
-  --color-gray-5: #F2F2F2;
+  --color-gray-100: #fafafa;
+  --color-gray-200: #f8f8f8;
+  --color-gray-300: #f5f5f5;
+  --color-gray-400: #fdfdfd;
+  --color-gray-500: #f2f2f2;
+  --color-gray-600: #929eae;
+  --color-gray-700: #78778b;
 
   /* Fonts */
-  --: var(--);
+  --font-kumbh: var(--font-kumbh-sans);
 }

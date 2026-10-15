@@ -17,7 +17,7 @@ const navItems = [
     icon: LayoutGridCircles,
   },
   {
-    label: "Transactions",
+    label: "Transações",
     href: "/transactions",
     icon: Wallet,
   },
@@ -53,7 +53,7 @@ export default function SideBar() {
   };
 
   return (
-    <div className="flex w-3xs flex-col gap-4 bg-gray-1">
+    <div className="flex w-3xs flex-col gap-4 bg-gray-100">
       <div className="flex h-full flex-col justify-between px-5 py-12">
         <nav>
           <ul>{navItems.map(renderNavItems)}</ul>
