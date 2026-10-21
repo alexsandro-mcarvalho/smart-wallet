@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR">
-      <body className={`${kumbhSans.variable} font-kumbh-sans`}>{children}</body>
+    <html lang="pt-BR" className={`${kumbhSans.variable} font-kumbh`}>
+      <body>{children}</body>
     </html>
   );
 }
