@@ -12,7 +12,7 @@ import { RegisterRequest, registerSchema } from "@/types/auth";
 import FieldErrorMessage from "@/components/field-error-message";
 import { registerUser } from "@/services/auth-service";
 import { useState } from "react";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/lib/errors/api-error";
 
 export default function RegisterPage() {
   const {
@@ -43,30 +43,17 @@ export default function RegisterPage() {
       <AuthTitle title="Create new account" description="Welcome back! Please enter your details" />
       <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
         <FormField label="Username" htmlFor="username">
-          <Input
-            placeholder="user"
-            id="username"
-            {...register("username")}
-          />
+          <Input placeholder="user" id="username" {...register("username")} />
           <FieldErrorMessage message={errors.username?.message} />
         </FormField>
 
         <FormField label="Email" htmlFor="email">
-          <Input
-            placeholder="example@gmail.com"
-            id="email"
-            {...register("email")}
-          />
+          <Input placeholder="example@gmail.com" id="email" {...register("email")} />
           <FieldErrorMessage message={errors.email?.message} />
         </FormField>
 
         <FormField label="Senha" htmlFor="senha">
-          <Input
-            placeholder="Digite sua senha"
-            id="senha"
-            type="password"
-            {...register("password")}
-          />
+          <Input placeholder="Digite sua senha" id="senha" type="password" {...register("password")} />
           <FieldErrorMessage message={errors.password?.message} />
         </FormField>
 

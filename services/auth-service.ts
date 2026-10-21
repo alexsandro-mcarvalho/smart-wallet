@@ -1,4 +1,4 @@
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/lib/errors/api-error";
 import { LoginRequest, RegisterRequest, RegisterResponse } from "@/types/auth";
 import { ErrorResponse } from "@/types/error";
 
@@ -37,4 +37,3 @@ export async function login(data: LoginRequest): Promise<void> {
     throw new ApiError(errorResponse.message);
   }
 }
-

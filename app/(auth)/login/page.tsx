@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { login } from "@/services/auth-service";
 import { useState } from "react";
-import { ApiError } from "@/lib/api-error";
+import { ApiError } from "@/lib/errors/api-error";
 import { useRouter } from "next/navigation";
 import FieldErrorMessage from "@/components/field-error-message";
 
@@ -57,7 +57,7 @@ export default function LoginPage() {
         </FormField>
 
         <Button disabled={!isValid || isSubmitting}>Entrar</Button>
-        
+
         <FieldErrorMessage message={errorMessage} />
       </form>
 
