@@ -25,7 +25,7 @@ const navItems = [
 
 const support = [
   {
-    label: "Logout",
+    label: "Sair",
     href: "/login",
     icon: LogOut,
   },
