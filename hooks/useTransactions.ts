@@ -7,6 +7,6 @@ export default function useTransactions() {
   return {
     transactions: data?.data || [],
     isLoading,
-    error
+    error,
   };
 }

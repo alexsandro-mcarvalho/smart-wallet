@@ -10,7 +10,7 @@ export default function AuthRedirect({
   redirectUrl: string;
 }) {
   return (
-    <p className="text-gray-600 mt-4 text-center text-sm font-normal">
+    <p className="mt-4 text-center text-sm font-normal text-gray-600">
       {description}{" "}
       <Link href={redirectUrl} className="font-medium text-black">
         {redirectText}

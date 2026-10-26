@@ -13,7 +13,7 @@ export type RegisterResponse = {
   username: string;
   email: string;
   createdAt: string;
-}
+};
 
 export const loginSchema = z.object({
   email: z.email("Email inválido"),
@@ -21,4 +21,3 @@ export const loginSchema = z.object({
 });
 
 export type LoginRequest = z.infer<typeof loginSchema>;
-
