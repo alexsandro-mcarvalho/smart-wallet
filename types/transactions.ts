@@ -1,16 +1,8 @@
-type AssetType = "CRYPTO_CURRENCY" | "STOCK";
+import { AssetSummaryResponse } from "./assets";
 
 type TransactionType = "BUY" | "SELL";
 
-export type AssetSummaryResponse = {
-  id: number;
-  name: string;
-  symbol: string;
-  assetType: AssetType;
-  logoUrl: string;
-};
-
-export type Transaction = {
+export type TransactionResponse = {
   id: number;
   asset: AssetSummaryResponse;
   type: TransactionType;
