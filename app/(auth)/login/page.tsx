@@ -31,7 +31,7 @@ export default function LoginPage() {
     setErrorMessage(undefined);
     try {
       await login(data);
-      router.push("/dashboard");
+      router.push("/");
     } catch (error) {
       if (error instanceof ApiError) {
         setErrorMessage(error.message);
