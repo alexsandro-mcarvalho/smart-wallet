@@ -8,6 +8,15 @@ export function formatCurrency(value: number): string {
   return currencyFormatter.format(value).replace(/\s/g, "");
 }
 
+const quantityFormatter = new Intl.NumberFormat("pt-BR", {
+  useGrouping: true,
+  maximumFractionDigits: 20,
+});
+
+export function formatQuantity(value: number): string {
+  return quantityFormatter.format(value);
+}
+
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
   day: "numeric",
   month: "long",

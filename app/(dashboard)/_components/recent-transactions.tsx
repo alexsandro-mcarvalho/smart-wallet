@@ -3,7 +3,7 @@
 import { ChevronRight, LoaderCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Image from "next/image";
-import { formatCurrency, formatDate } from "@/lib/utils/formatter";
+import { formatCurrency, formatDate, formatQuantity } from "@/lib/utils/formatter";
 import Link from "next/link";
 import useTransactions from "@/hooks/useTransactions";
 
@@ -77,7 +77,7 @@ export default function RecentTransactions() {
                   </div>
                 </TableCell>
                 <TableCell>{transaction.type}</TableCell>
-                <TableCell className="font-semibold text-text-1">{transaction.quantity}</TableCell>
+                <TableCell className="font-semibold text-text-1">{formatQuantity(transaction.quantity)}</TableCell>
                 <TableCell className="font-semibold text-text-1">{formatCurrency(transaction.price)}</TableCell>
                 <TableCell>{formatDate(transaction.transactionAt)}</TableCell>
               </TableRow>
