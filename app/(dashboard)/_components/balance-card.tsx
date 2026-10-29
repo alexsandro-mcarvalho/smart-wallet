@@ -1,5 +1,9 @@
+"use client";
+
+import { animateValue } from "@/lib/utils/animate-value";
 import { formatCurrency } from "@/lib/utils/formatter";
 import { LucideIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type BalanceCardProps = {
   label: string;
@@ -29,6 +33,12 @@ const balanceCardAmountVariants = {
 };
 
 export default function BalanceCard({ label, amount, icon: BalanceCardIcon, variant = "primary" }: BalanceCardProps) {
+  const [animatedAmount, setAnimatedAmount] = useState(0);
+
+  useEffect(() => {
+    return animateValue(amount, setAnimatedAmount);
+  }, [amount]);
+
   return (
     <div className={`flex items-center gap-4 rounded-lg px-5 py-6 ${balanceCardVariants[variant]}`}>
       <div className={`flex h-11 w-11 items-center justify-center rounded-full ${balanceCardIconVariants[variant]}`}>
@@ -36,7 +46,7 @@ export default function BalanceCard({ label, amount, icon: BalanceCardIcon, vari
       </div>
       <div className="flex flex-col gap-2">
         <span className={`text-base font-normal ${balanceCardLabelVariants[variant]}`}>{label}</span>
-        <span className={`text-2xl font-bold ${balanceCardAmountVariants[variant]}`}>{formatCurrency(amount)}</span>
+        <span className={`text-2xl font-bold ${balanceCardAmountVariants[variant]}`}>{formatCurrency(animatedAmount)}</span>
       </div>
     </div>
   );

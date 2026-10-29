@@ -1,7 +1,7 @@
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
-  useGrouping: false,
+  useGrouping: true,
 });
 
 export function formatCurrency(value: number): string {
