@@ -13,7 +13,7 @@ export default function RecentTransactions() {
   const { transactions, isLoading, error } = useTransactions();
 
   return (
-    <div className="rounded-lg border border-gray-300 px-6 py-5">
+    <div className="rounded-lg border border-gray-500 px-6 py-5">
       <div className="flex items-center justify-between">
         <span className="text-lg font-semibold text-text-1">Transações Recentes</span>
         <Link
