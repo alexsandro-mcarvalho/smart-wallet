@@ -19,6 +19,5 @@ export async function login(data: LoginRequest): Promise<void> {
     },
     credentials: "include",
     body: JSON.stringify(data),
-    noContent: true,
   });
 }

@@ -3,12 +3,7 @@ import { ApiError } from "../errors/api-error";
 
 const API_URL = process.env.NEXT_PUBLIC_SMART_WALLET_API_URL;
 
-type ApiFetchOptions = RequestInit & {
-  noContent?: boolean;
-};
-
-export async function apiFetch<T>(path: string, fetchOptions: ApiFetchOptions): Promise<T> {
-  const { noContent, ...options } = fetchOptions;
+export async function apiFetch<T>(path: string, options: RequestInit): Promise<T> {
   try {
     const response = await fetch(`${API_URL}${path}`, {
       ...options,
@@ -19,7 +14,7 @@ export async function apiFetch<T>(path: string, fetchOptions: ApiFetchOptions): 
       const body = (await response.json()) as ErrorResponse;
       throw new ApiError(body.message);
     }
-    if (noContent) {
+    if (response.status === 204 || response.status === 304) {
       return {} as T;
     }
 
