@@ -6,6 +6,7 @@ import Image from "next/image";
 import { formatCurrency, formatDate, formatQuantity } from "@/lib/utils/formatter";
 import Link from "next/link";
 import useTransactions from "@/hooks/useTransactions";
+import TransactionTypeBadge from "./transaction-type-badge";
 
 const headers = ["ATIVO", "TIPO", "QUANTIDADE", "TOTAL TRANSACIONADO", "DATA DE TRANSAÇÃO"];
 
@@ -76,7 +77,9 @@ export default function RecentTransactions() {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{transaction.type}</TableCell>
+                <TableCell>
+                  <TransactionTypeBadge type={transaction.type} />
+                </TableCell>
                 <TableCell className="font-semibold text-text-1">{formatQuantity(transaction.quantity)}</TableCell>
                 <TableCell className="font-semibold text-text-1">{formatCurrency(transaction.price)}</TableCell>
                 <TableCell>{formatDate(transaction.transactionAt)}</TableCell>
