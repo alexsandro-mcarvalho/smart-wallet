@@ -1,8 +1,11 @@
 "use client";
 
-import { ChevronRight, LoaderCircle } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Image from "next/image";
+import TableAssetCell from "@/components/table/table-asset-cell";
+import TableEmpty from "@/components/table/table-empty";
+import TableError from "@/components/table/table-error";
+import TableLoading from "@/components/table/table-loading";
 import { formatCurrency, formatDate, formatQuantity } from "@/lib/utils/formatter";
 import Link from "next/link";
 import useTransactions from "@/hooks/useTransactions";
@@ -35,53 +38,31 @@ export default function RecentTransactions() {
         </TableHeader>
         <TableBody>
           {isLoading ? (
-            <TableRow>
-              <TableCell colSpan={headers.length} className="h-32 text-center">
-                <div role="status" className="flex items-center justify-center gap-2 text-gray-600">
-                  <LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" />
-                  <span className="sr-only">Carregando transações...</span>
-                </div>
-              </TableCell>
-            </TableRow>
+            <TableLoading colSpan={headers.length} message="Carregando transações..." />
           ) : error ? (
-            <TableRow>
-              <TableCell colSpan={headers.length} className="h-32 text-center">
-                <p role="alert" className="text-red-600">
-                  {error instanceof Error && error.message
-                    ? error.message
-                    : "Não foi possível carregar as transações. Tente novamente mais tarde."}
-                </p>
-              </TableCell>
-            </TableRow>
+            <TableError
+              colSpan={headers.length}
+              message={
+                error instanceof Error && error.message
+                  ? error.message
+                  : "Não foi possível carregar as transações. Tente novamente mais tarde."
+              }
+            />
           ) : transactions.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={headers.length} className="h-32 text-center text-gray-600">
-                <p role="status">Não há nenhuma transação.</p>
-              </TableCell>
-            </TableRow>
+            <TableEmpty colSpan={headers.length} />
           ) : (
             transactions.map((transaction) => (
               <TableRow key={transaction.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={transaction.asset.logoUrl}
-                      alt={transaction.asset.name}
-                      width={40}
-                      height={40}
-                      className="h-10 w-10 object-contain"
-                    />
-                    <div className="flex flex-col gap-1">
-                      <span className="text-sm font-medium text-text-1">{transaction.asset.name}</span>
-                      <span className="text-xs font-light text-gray-600">{transaction.asset.symbol}</span>
-                    </div>
-                  </div>
-                </TableCell>
+                <TableAssetCell
+                  logoUrl={transaction.asset.logoUrl}
+                  name={transaction.asset.name}
+                  symbol={transaction.asset.symbol}
+                />
                 <TableCell>
                   <TransactionTypeBadge type={transaction.type} />
                 </TableCell>
-                <TableCell className="font-semibold text-text-1">{formatQuantity(transaction.quantity)}</TableCell>
-                <TableCell className="font-semibold text-text-1">{formatCurrency(transaction.price)}</TableCell>
+                <TableCell variant="secondary">{formatQuantity(transaction.quantity)}</TableCell>
+                <TableCell variant="secondary">{formatCurrency(transaction.price)}</TableCell>
                 <TableCell>{formatDate(transaction.transactionAt)}</TableCell>
               </TableRow>
             ))

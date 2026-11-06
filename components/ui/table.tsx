@@ -37,12 +37,22 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return <th data-slot="table-head" className={cn("py-4 text-left whitespace-nowrap", className)} {...props} />;
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+type TableCellProps = React.ComponentProps<"td"> & {
+  variant?: "primary" | "secondary";
+};
+
+const tableCellVariants = {
+  primary: "",
+  secondary: "font-semibold text-text-1",
+};
+
+function TableCell({ className, variant = "primary", ...props }: TableCellProps) {
   return (
     <td
       data-slot="table-cell"
       className={cn(
         "py-4 align-middle text-sm font-medium whitespace-nowrap text-gray-600 [&:has([role=checkbox])]:pr-0",
+        tableCellVariants[variant],
         className,
       )}
       {...props}
