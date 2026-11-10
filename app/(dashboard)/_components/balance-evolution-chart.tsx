@@ -16,12 +16,13 @@ const chartData = [
   { period: "22 jan", saldo: 2450 },
 ];
 
-// Five equal intervals, rounded up to a step of 1, 2 or 5 times a power of ten.
+// Round the upper limit, then show five values including zero across four equal intervals.
 const maxBalance = Math.max(1, ...chartData.map(({ saldo }) => saldo));
 const rawStep = maxBalance / 5;
 const magnitude = 10 ** Math.floor(Math.log10(rawStep));
 const step = ([1, 2, 5, 10].find((value) => value * magnitude >= rawStep) ?? 10) * magnitude;
-const balanceTicks = Array.from({ length: 6 }, (_, index) => Number((index * step).toPrecision(12)));
+const maxAxisBalance = step * 5;
+const balanceTicks = Array.from({ length: 5 }, (_, index) => Number(((index * maxAxisBalance) / 4).toPrecision(12)));
 const axisFormatter = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
 
 function formatAxisValue(value: number): string {
@@ -54,7 +55,7 @@ export function BalanceEvolutionChart() {
           <AreaChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12, top: 12 }}>
             <YAxis
               tick={{ fontFamily: "var(--font-kumbh-sans)" }}
-              domain={[0, balanceTicks[5]]}
+              domain={[0, maxAxisBalance]}
               ticks={balanceTicks}
               interval={0}
               tickLine={false}

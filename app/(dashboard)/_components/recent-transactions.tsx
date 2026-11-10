@@ -14,7 +14,7 @@ import TransactionTypeBadge from "./transaction-type-badge";
 const headers = ["ATIVO", "TIPO", "QUANTIDADE", "TOTAL TRANSACIONADO", "DATA DE TRANSAÇÃO"];
 
 export default function RecentTransactions() {
-  const { transactions, isLoading, error } = useTransactions();
+  const { transactions, isLoading, error } = useTransactions({ page: 0, size: 3 });
 
   return (
     <div className="rounded-lg border border-gray-500 px-6 py-5">

@@ -31,3 +31,14 @@ export function formatDate(value: string): string {
     .map((part) => part.value)
     .join(" ");
 }
+
+const timeFormatter = new Intl.DateTimeFormat("pt-BR", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+  timeZone: "UTC",
+});
+
+export function formatTime(value: string | number): string {
+  return timeFormatter.format(new Date(value));
+}

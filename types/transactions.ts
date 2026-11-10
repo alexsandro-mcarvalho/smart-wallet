@@ -8,5 +8,6 @@ export type TransactionResponse = {
   type: TransactionType;
   quantity: number;
   price: number;
+  unitPrice: number;
   transactionAt: string;
 };
