@@ -46,7 +46,9 @@ export default function BalanceCard({ label, amount, icon: BalanceCardIcon, vari
       </div>
       <div className="flex flex-col gap-2">
         <span className={`text-base font-normal ${balanceCardLabelVariants[variant]}`}>{label}</span>
-        <span className={`text-2xl font-bold ${balanceCardAmountVariants[variant]}`}>{formatCurrency(animatedAmount)}</span>
+        <span className={`text-2xl font-bold ${balanceCardAmountVariants[variant]}`}>
+          {formatCurrency(animatedAmount)}
+        </span>
       </div>
     </div>
   );
