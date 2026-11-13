@@ -13,6 +13,7 @@ export default function useTransactions({ page, size }: PaginationRequest) {
 
   return {
     transactions: data?.data || [],
+    paginationResponse: data,
     isLoading,
     error,
   };
