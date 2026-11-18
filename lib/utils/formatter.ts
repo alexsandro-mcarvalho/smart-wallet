@@ -4,8 +4,8 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   useGrouping: true,
 });
 
-export function formatCurrency(value: number): string {
-  return currencyFormatter.format(value).replace(/\s/g, "");
+export function formatCurrency(value: number | string): string {
+  return currencyFormatter.format(value as number | `${number}`).replace(/\s/g, "");
 }
 
 const quantityFormatter = new Intl.NumberFormat("pt-BR", {
@@ -13,8 +13,8 @@ const quantityFormatter = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 20,
 });
 
-export function formatQuantity(value: number): string {
-  return quantityFormatter.format(value);
+export function formatQuantity(value: number | string): string {
+  return quantityFormatter.format(value as number | `${number}`);
 }
 
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", {

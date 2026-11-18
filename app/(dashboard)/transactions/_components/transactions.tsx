@@ -10,6 +10,7 @@ import TableError from "@/components/table/table-error";
 import TableLoading from "@/components/table/table-loading";
 import PaginationControls from "@/components/pagination-controls";
 import { useState } from "react";
+import CreateTransactionDialog from "./create-transaction-dialog";
 
 const headers = ["ATIVO", "TIPO", "QUANTIDADE", "PREÇO UNITÁRIO", "TOTAL TRANSACIONADO", "DATA DE TRANSAÇÃO"];
 
@@ -18,8 +19,11 @@ export default function Transactions() {
   const { transactions, paginationResponse, isLoading, error } = useTransactions({ page: currentPage, size: 8 });
 
   return (
-    <div>
-      <Table className="mb-5">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end">
+        <CreateTransactionDialog />
+      </div>
+      <Table>
         <TableHeader>
           <TableRow>
             {headers.map((header, index) => (
