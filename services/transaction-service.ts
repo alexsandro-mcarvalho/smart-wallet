@@ -1,6 +1,22 @@
 import { apiFetch } from "@/lib/utils/api-request";
+import type { CreateTransactionFormData } from "@/schemas/transaction.schema";
 import { PaginationRequest, PaginationResponse } from "@/types/pagination";
-import { TransactionResponse } from "@/types/transactions";
+import { CreateTransactionResponse, TransactionResponse } from "@/types/transactions";
+
+export async function createTransaction(
+  data: CreateTransactionFormData,
+  idempotencyKey: string,
+): Promise<CreateTransactionResponse> {
+  return apiFetch<CreateTransactionResponse>("/api/v1/transactions", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "Idempotency-Key": idempotencyKey,
+    },
+    body: JSON.stringify(data),
+  });
+}
 
 export async function getTransactions({
   page,

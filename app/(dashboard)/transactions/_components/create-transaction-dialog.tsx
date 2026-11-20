@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ArrowLeftRight, CalendarIcon } from "lucide-react";
+import { useSWRConfig } from "swr";
 
 import Button from "@/components/button";
 import FieldErrorMessage from "@/components/field-error-message";
@@ -25,6 +26,8 @@ import {
 } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ApiError } from "@/lib/errors/api-error";
+import { createTransaction } from "@/services/transaction-service";
 import {
   createTransactionSchema,
   type CreateTransactionFormValues,
@@ -51,8 +54,11 @@ function getTransactionDefaultValues(): CreateTransactionFormValues {
 }
 
 export default function CreateTransactionDialog() {
+  const { mutate } = useSWRConfig();
   const [open, setOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const transactionRequest = useRef<{ payload: string; idempotencyKey: string } | null>(null);
   const {
     control,
     handleSubmit,
@@ -65,16 +71,40 @@ export default function CreateTransactionDialog() {
   });
 
   function handleOpenChange(nextOpen: boolean) {
+    if (isSubmitting) return;
+
     if (nextOpen) {
       reset(getTransactionDefaultValues());
+      setErrorMessage(undefined);
+      transactionRequest.current = null;
     }
     setCalendarOpen(false);
     setOpen(nextOpen);
   }
 
-  function onSubmit(data: CreateTransactionFormData) {
-    console.log("Nova transação:", data);
-    handleOpenChange(false);
+  async function onSubmit(data: CreateTransactionFormData) {
+    setErrorMessage(undefined);
+
+    try {
+      const payload = JSON.stringify(data);
+      if (transactionRequest.current?.payload !== payload) {
+        transactionRequest.current = { payload, idempotencyKey: crypto.randomUUID() };
+      }
+
+      await createTransaction(data, transactionRequest.current.idempotencyKey);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof ApiError
+          ? error.message
+          : "Não foi possível cadastrar a transação. Por favor, tente novamente.",
+      );
+      return;
+    }
+
+    transactionRequest.current = null;
+    setCalendarOpen(false);
+    setOpen(false);
+    void mutate((key) => typeof key === "object" && key !== null && "key" in key && key.key === "transactions");
   }
 
   return (
@@ -91,7 +121,7 @@ export default function CreateTransactionDialog() {
           <DialogDescription>Informe os dados da compra ou venda do ativo.</DialogDescription>
         </DialogHeader>
 
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form className="flex flex-col gap-5" onSubmit={(event) => void handleSubmit(onSubmit)(event)} noValidate>
           <Controller
             name="assetId"
             control={control}
@@ -266,8 +296,14 @@ export default function CreateTransactionDialog() {
             </div>
           </fieldset>
 
+          <div role="alert">
+            <FieldErrorMessage message={errorMessage} />
+          </div>
+
           <DialogFooter>
-            <DialogClose render={<Button type="button" variant="secondary" size="sm" />}>Cancelar</DialogClose>
+            <DialogClose render={<Button type="button" variant="secondary" size="sm" disabled={isSubmitting} />}>
+              Cancelar
+            </DialogClose>
             <Button type="submit" size="sm" disabled={!isValid || isSubmitting}>
               Cadastrar transação
             </Button>
